@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
+#include "UI/PauseMenuUserWidget.h"
 #include "NexusSampleProjectCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -21,6 +23,24 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TSoftObjectPtr<UInputMappingContext> InputMapping;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TSoftObjectPtr<UInputAction> PauseAction;
+
+	UPROPERTY(EditAnywhere, Category = "Menus Class Types")
+	TSubclassOf<UPauseMenuUserWidget> PauseMenuWidgetClass;
+
+protected:
+	// ~APawn interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// ~End APawn interface
+
+	void Pause(const FInputActionInstance& Instance);
+
+	FEnhancedInputActionEventBinding* PauseInputBinding;
 
 private:
 	/** Top down camera */

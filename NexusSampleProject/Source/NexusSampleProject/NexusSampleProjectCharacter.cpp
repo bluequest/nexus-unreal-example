@@ -9,6 +9,9 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
 #include "Engine/World.h"
 
 ANexusSampleProjectCharacter::ANexusSampleProjectCharacter()
@@ -43,6 +46,46 @@ ANexusSampleProjectCharacter::ANexusSampleProjectCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+}
+
+// Input
+void ANexusSampleProjectCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	{
+		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(PC->Player))
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				if (InputMapping.ToSoftObjectPath().IsValid())
+				{
+					InputSystem->AddMappingContext(InputMapping.LoadSynchronous(), 100);
+				}
+			}
+
+		}
+	}
+
+	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		PauseInputBinding = &EnhancedInput->BindAction(PauseAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ANexusSampleProjectCharacter::Pause);
+	}
+}
+
+void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
+{
+	UPauseMenuUserWidget* PauseMenuWidget = CreateWidget<UPauseMenuUserWidget>(GetWorld(), PauseMenuWidgetClass);
+	if (IsValid(PauseMenuWidget))
+	{
+		PauseMenuWidget->AddToViewport();
+	}
+	
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Pause Button Pressed!")));
+	}
 }
 
 void ANexusSampleProjectCharacter::Tick(float DeltaSeconds)
