@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
 #include "UI/PauseMenuUserWidget.h"
+#include "UI/CreatorSupportUserWidget.h"
 #include "NexusSampleProjectCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -30,8 +31,14 @@ public:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TSoftObjectPtr<UInputAction> PauseAction;
 
-	UPROPERTY(EditAnywhere, Category = "Menus Class Types")
+	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UPauseMenuUserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UPauseMenuUserWidget* PauseMenuWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UCreatorSupportUserWidget* CreatorSupportWidget;
 
 protected:
 	// ~APawn interface

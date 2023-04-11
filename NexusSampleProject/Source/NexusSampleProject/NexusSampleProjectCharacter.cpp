@@ -76,15 +76,25 @@ void ANexusSampleProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 
 void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
 {
-	UPauseMenuUserWidget* PauseMenuWidget = CreateWidget<UPauseMenuUserWidget>(GetWorld(), PauseMenuWidgetClass);
 	if (IsValid(PauseMenuWidget))
 	{
-		PauseMenuWidget->AddToViewport();
+		PauseMenuWidget->RemoveFromParent();
+		PauseMenuWidget = nullptr;
+
+		if (IsValid(CreatorSupportWidget))
+		{
+			CreatorSupportWidget->RemoveFromParent();
+			CreatorSupportWidget = nullptr;
+		}
 	}
-	
-	if (GEngine)
+	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Pause Button Pressed!")));
+		ensure (IsValid(PauseMenuWidgetClass));
+		PauseMenuWidget = CreateWidget<UPauseMenuUserWidget>(GetWorld(), PauseMenuWidgetClass);
+		if (IsValid(PauseMenuWidget))
+		{
+			PauseMenuWidget->AddToViewport();
+		}
 	}
 }
 
