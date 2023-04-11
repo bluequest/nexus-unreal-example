@@ -1,0 +1,3 @@
+[submodule "NexusSampleProject/Plugins/nexus-unreal-sdk"]
+	path = NexusSampleProject/Plugins/nexus-unreal-sdk
+	url = git@github.com:bluequest/nexus-unreal-sdk.git
