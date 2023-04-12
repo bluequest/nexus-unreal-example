@@ -86,6 +86,12 @@ void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
 			CreatorSupportWidget->RemoveFromParent();
 			CreatorSupportWidget = nullptr;
 		}
+
+		if (IsValid(LinkAccountWidget))
+		{
+			LinkAccountWidget->RemoveFromParent();
+			LinkAccountWidget = nullptr;
+		}
 	}
 	else
 	{

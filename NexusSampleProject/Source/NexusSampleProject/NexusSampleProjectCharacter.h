@@ -40,6 +40,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Menus")
 	UCreatorSupportUserWidget* CreatorSupportWidget;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	ULinkAccountUserWidget* LinkAccountWidget;
+
 protected:
 	// ~APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

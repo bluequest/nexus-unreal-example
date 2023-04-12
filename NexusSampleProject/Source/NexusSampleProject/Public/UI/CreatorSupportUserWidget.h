@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/NexusSampleProjectBaseWidget.h"
+#include "UI/LinkAccountUserWidget.h"
 #include "CreatorSupportUserWidget.generated.h"
 
 class UTextBlock;
@@ -21,6 +22,9 @@ class NEXUSSAMPLEPROJECT_API UCreatorSupportUserWidget : public UNexusSampleProj
 
 public:
 	void SetupInitialFocus(APlayerController* Controller) override;
+
+	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
+	TSubclassOf<ULinkAccountUserWidget> LinkAccountWidgetClass;
 
 protected:
 
@@ -43,6 +47,10 @@ private:
 	/** UButton for copying the player's referral code */
 	UPROPERTY(meta = (BindWidget))
 	UButton* CopyCodeButton;
+
+	/** UButton for Nexus account linking information */
+	UPROPERTY(meta = (BindWidget))
+	UButton* LinkAccountButton;	
 	
 	/** UEditableText for submitting a referral code */
 	UPROPERTY(meta = (BindWidget))
@@ -59,4 +67,12 @@ private:
 	/** Callback for when the submit button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnSubmitButtonPressed();
+
+	/** Callback for when the copy button is pressed */
+	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
+	void OnCopyButtonPressed();
+
+	/** Callback for when the link account button is pressed */
+	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
+	void OnLinkAccountButtonPressed();	
 };
