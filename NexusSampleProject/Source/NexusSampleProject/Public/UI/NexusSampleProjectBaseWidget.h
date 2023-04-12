@@ -22,5 +22,9 @@ public:
 	 * @param Controller the APlayerController instance to set focus
 	 */
 	virtual void SetupInitialFocus(APlayerController* Controller);
+
+protected:
+
+	void NativeConstruct() override;
 	
 };

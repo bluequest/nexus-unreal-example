@@ -6,3 +6,10 @@
 void UNexusSampleProjectBaseWidget::SetupInitialFocus(APlayerController* Controller)
 {
 }
+
+void UNexusSampleProjectBaseWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	SetupInitialFocus(GetOwningPlayer());
+}
