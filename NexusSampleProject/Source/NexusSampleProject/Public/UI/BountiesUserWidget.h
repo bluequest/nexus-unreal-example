@@ -23,11 +23,11 @@ protected:
 
 	void NativeConstruct() override;
 
-private:
-
 	/** UButton for returning to game */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* BackButton;
+
+private:
 
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Bounties Menu Buttons")

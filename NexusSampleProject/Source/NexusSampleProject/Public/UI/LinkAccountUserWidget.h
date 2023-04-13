@@ -22,21 +22,21 @@ protected:
 
 	void NativeConstruct() override;
 
+	/** UButton for returning to game */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UButton* BackButton;
+
+	/** UTextBlock for containing the player's referral code */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UTextBlock* PlayerReferralCode;
+
 public:
 
 	void SetupInitialFocus(APlayerController* Controller) override;
-
-	/** UButton for returning to game */
-	UPROPERTY(meta = (BindWidget))
-	UButton* BackButton;
 
 private:
 	
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Link Account Menu Buttons")
 	void OnBackButtonPressed();
-
-	/** UTextBlock for containing the player's referral code */
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PlayerReferralCode;
 };

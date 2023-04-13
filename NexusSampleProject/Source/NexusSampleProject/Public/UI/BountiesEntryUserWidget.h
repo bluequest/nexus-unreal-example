@@ -22,23 +22,23 @@ protected:
 
 	void NativeConstruct() override;
 
-private:
-
 	/** UProgressBar for tracking the bounty's progress */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UProgressBar* BountyProgressBar;
 	
 	/** UTextBlock for containing the bounty's title */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* BountyTitle;
 
 	/** UTextBlock for containing the bounty's description */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* BountyDescription;
 	
 	/** UButton for collecting a referral bounty */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* CollectBountyButton;
+
+private:
 
 	/** Callback for when the collect bounty button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Bounties Menu Buttons")

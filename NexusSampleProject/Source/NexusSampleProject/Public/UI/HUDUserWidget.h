@@ -29,11 +29,11 @@ protected:
 
 	void NativeConstruct() override;
 
-private:
-
 	/** UButton for pausing the game */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* PauseButton;
+
+private:
 
 	/** Callback for when the pause button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "HUD Menu Buttons")

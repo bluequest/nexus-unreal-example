@@ -58,8 +58,6 @@ protected:
 
 	void Pause(const FInputActionInstance& Instance);
 
-	FEnhancedInputActionEventBinding* PauseInputBinding;
-
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

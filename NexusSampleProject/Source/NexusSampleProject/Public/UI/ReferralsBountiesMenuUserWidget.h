@@ -34,40 +34,40 @@ protected:
 
 	void NativeConstruct() override;
 
-private:
-	
 	/** UTextBlock for containing the player's referral code */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* PlayerReferralCode;
 
 	/** UButton for returning to game */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* BackButton;
 
 	/** UButton for submitting a referral code */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* SubmitButton;
 
 	/** UButton for copying the player's referral code */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* CopyCodeButton;
 
 	/** UButton for viewing the player's referral bounties */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* ViewBoutniesButton;
 	
 	/** UButton for Nexus account linking information */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* LinkAccountButton;	
 	
 	/** UEditableText for submitting a referral code */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UEditableTextBox* ReferralCodeInputTextBox;
 
 	/** UProgressBar the referral progress bar */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UProgressBar* ReferralProgressBar;
 
+private:
+	
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Referrals & Bounties Menu Buttons")
 	void OnBackButtonPressed();

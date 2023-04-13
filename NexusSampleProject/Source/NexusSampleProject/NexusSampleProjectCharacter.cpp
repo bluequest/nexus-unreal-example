@@ -70,7 +70,7 @@ void ANexusSampleProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 
 	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		PauseInputBinding = &EnhancedInput->BindAction(PauseAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ANexusSampleProjectCharacter::Pause);
+		EnhancedInput->BindAction(PauseAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ANexusSampleProjectCharacter::Pause);
 	}
 }
 

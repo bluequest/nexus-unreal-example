@@ -26,19 +26,19 @@ protected:
 
 	void NativeConstruct() override;
 
-private:
-
 	/** UButton for returning to game */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* BackButton;
 
 	/** UButton for submitting a referral code */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* SubmitButton;
 	
 	/** UEditableText for submitting a referral code */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UEditableTextBox* CreatorCodeInputTextBox;
+
+private:
 
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
