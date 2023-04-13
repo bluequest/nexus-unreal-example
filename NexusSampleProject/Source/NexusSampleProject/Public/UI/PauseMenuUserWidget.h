@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/NexusSampleProjectBaseWidget.h"
+#include "UI/ReferralsBountiesMenuUserWidget.h"
 #include "UI/CreatorSupportUserWidget.h"
 #include "PauseMenuUserWidget.generated.h"
 
@@ -23,8 +24,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UCreatorSupportUserWidget> CreatorSupportWidgetClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	UCreatorSupportUserWidget* CreatorSupportWidget;
+	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
+	TSubclassOf<UReferralsBountiesMenuUserWidget> ReferralsBountiesMenuWidgetClass;
 
 protected:
 
@@ -40,6 +41,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* CreatorSupportButton;
 
+	/** UButton for Referrals & Bounties widget */
+	UPROPERTY(meta = (BindWidget))
+	UButton* ReferralsBountiesButton;
+
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Pause Menu Buttons")
 	void OnBackButtonPressed();
@@ -47,4 +52,8 @@ private:
 	/** Callback for when the creator support button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Pause Menu Buttons")
 	void OnCreatorSupportButtonPressed();
+
+	/** Callback for when the referrals & bounties button is pressed */
+	UFUNCTION(BlueprintCallable, Category = "Pause Menu Buttons")
+	void OnReferralsBountiesButtonPressed();
 };

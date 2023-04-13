@@ -18,6 +18,11 @@ void UPauseMenuUserWidget::NativeConstruct()
 	{
 		CreatorSupportButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnCreatorSupportButtonPressed);
 	}
+
+	if (IsValid(ReferralsBountiesButton))
+	{
+		ReferralsBountiesButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnReferralsBountiesButtonPressed);
+	}
 }
 
 void UPauseMenuUserWidget::OnBackButtonPressed()
@@ -32,7 +37,7 @@ void UPauseMenuUserWidget::OnBackButtonPressed()
 void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 {
 	ensure(IsValid(CreatorSupportWidgetClass));
-	CreatorSupportWidget = CreateWidget<UCreatorSupportUserWidget>(GetWorld(), CreatorSupportWidgetClass);
+	UCreatorSupportUserWidget* CreatorSupportWidget = CreateWidget<UCreatorSupportUserWidget>(GetWorld(), CreatorSupportWidgetClass);
 	if (IsValid(CreatorSupportWidget))
 	{
 		CreatorSupportWidget->AddToViewport();
@@ -40,6 +45,21 @@ void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
 		{
 			CharacterRef->CreatorSupportWidget = CreatorSupportWidget;
+		}
+	}
+}
+
+void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
+{
+	ensure(IsValid(ReferralsBountiesMenuWidgetClass));
+	UReferralsBountiesMenuUserWidget* ReferralsBountiesMenuWidget = CreateWidget<UReferralsBountiesMenuUserWidget>(GetWorld(), ReferralsBountiesMenuWidgetClass);
+	if (IsValid(ReferralsBountiesMenuWidget))
+	{
+		ReferralsBountiesMenuWidget->AddToViewport();
+
+		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		{
+			CharacterRef->ReferralsBountiesMenuWidget = ReferralsBountiesMenuWidget;
 		}
 	}
 }

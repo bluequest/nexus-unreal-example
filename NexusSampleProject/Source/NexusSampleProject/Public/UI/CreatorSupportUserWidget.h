@@ -10,8 +10,6 @@
 class UTextBlock;
 class UButton;
 class UEditableTextBox;
-class UProgressBar;
-class UBountiesUserWidget;
 
 /**
  * Widget used to utilize Nexus Support-A-Creator functionality 
@@ -24,21 +22,11 @@ class NEXUSSAMPLEPROJECT_API UCreatorSupportUserWidget : public UNexusSampleProj
 public:
 	void SetupInitialFocus(APlayerController* Controller) override;
 
-	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
-	TSubclassOf<ULinkAccountUserWidget> LinkAccountWidgetClass;
-
-	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
-	TSubclassOf<UBountiesUserWidget> BountiesWidgetClass;
-
 protected:
 
 	void NativeConstruct() override;
 
 private:
-	
-	/** UTextBlock for containing the player's referral code */
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PlayerReferralCode;
 
 	/** UButton for returning to game */
 	UPROPERTY(meta = (BindWidget))
@@ -47,26 +35,10 @@ private:
 	/** UButton for submitting a referral code */
 	UPROPERTY(meta = (BindWidget))
 	UButton* SubmitButton;
-
-	/** UButton for copying the player's referral code */
-	UPROPERTY(meta = (BindWidget))
-	UButton* CopyCodeButton;
-
-	/** UButton for viewing the player's referral bounties */
-	UPROPERTY(meta = (BindWidget))
-	UButton* ViewBoutniesButton;
-	
-	/** UButton for Nexus account linking information */
-	UPROPERTY(meta = (BindWidget))
-	UButton* LinkAccountButton;	
 	
 	/** UEditableText for submitting a referral code */
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* CreatorCodeInputTextBox;
-
-	/** UProgressBar the referral progress bar */
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* ReferralProgressBar;
 
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
@@ -75,16 +47,4 @@ private:
 	/** Callback for when the submit button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnSubmitButtonPressed();
-
-	/** Callback for when the copy button is pressed */
-	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
-	void OnCopyButtonPressed();
-
-	/** Callback for when the link account button is pressed */
-	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
-	void OnLinkAccountButtonPressed();	
-
-	/** Callback for when the view bounties button is pressed */
-	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
-	void OnViewBountiesButtonPressed();	
 };

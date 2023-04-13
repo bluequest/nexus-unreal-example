@@ -8,6 +8,7 @@
 #include "UI/PauseMenuUserWidget.h"
 #include "UI/CreatorSupportUserWidget.h"
 #include "UI/BountiesUserWidget.h"
+#include "UI/ReferralsBountiesMenuUserWidget.h"
 #include "NexusSampleProjectCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -38,6 +39,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Menus")
 	UPauseMenuUserWidget* PauseMenuWidget;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UReferralsBountiesMenuUserWidget* ReferralsBountiesMenuWidget;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Menus")
 	UCreatorSupportUserWidget* CreatorSupportWidget;
 
