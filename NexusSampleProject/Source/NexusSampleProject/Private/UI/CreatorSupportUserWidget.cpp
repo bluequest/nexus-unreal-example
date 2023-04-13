@@ -2,6 +2,7 @@
 
 
 #include "UI/CreatorSupportUserWidget.h"
+#include "UI/BountiesUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -43,6 +44,11 @@ void UCreatorSupportUserWidget::NativeConstruct()
 	if (IsValid(LinkAccountButton))
 	{
 		LinkAccountButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnLinkAccountButtonPressed);
+	}
+
+	if (IsValid(ViewBoutniesButton))
+	{
+		ViewBoutniesButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnViewBountiesButtonPressed);
 	}
 	
 	// #TODO Generate auth code (https://api.nexus.gg/v1/referrals/player/{playerId}/authCode)
@@ -102,6 +108,21 @@ void UCreatorSupportUserWidget::OnLinkAccountButtonPressed()
 		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
 		{
 			CharacterRef->LinkAccountWidget = LinkAccountWidgetRef;
+		}
+	}
+}
+
+void UCreatorSupportUserWidget::OnViewBountiesButtonPressed()
+{
+	ensure(IsValid(BountiesWidgetClass));
+	UBountiesUserWidget* BountiesWidgetRef = CreateWidget<UBountiesUserWidget>(GetWorld(), BountiesWidgetClass);
+	if (IsValid(BountiesWidgetRef))
+	{
+		BountiesWidgetRef->AddToViewport();
+
+		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		{
+			CharacterRef->BountiesWidget = BountiesWidgetRef;
 		}
 	}
 }

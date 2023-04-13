@@ -92,6 +92,12 @@ void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
 			LinkAccountWidget->RemoveFromParent();
 			LinkAccountWidget = nullptr;
 		}
+
+		if (IsValid(BountiesWidget))
+		{	
+			BountiesWidget->RemoveFromParent();
+			BountiesWidget = nullptr;
+		}
 	}
 	else
 	{

@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "UI/PauseMenuUserWidget.h"
 #include "UI/CreatorSupportUserWidget.h"
+#include "UI/BountiesUserWidget.h"
 #include "NexusSampleProjectCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -42,6 +43,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Menus")
 	ULinkAccountUserWidget* LinkAccountWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UBountiesUserWidget* BountiesWidget;
 
 protected:
 	// ~APawn interface

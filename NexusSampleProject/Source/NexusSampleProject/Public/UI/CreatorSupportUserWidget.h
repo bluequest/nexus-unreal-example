@@ -11,6 +11,7 @@ class UTextBlock;
 class UButton;
 class UEditableTextBox;
 class UProgressBar;
+class UBountiesUserWidget;
 
 /**
  * Widget used to utilize Nexus Support-A-Creator functionality 
@@ -25,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<ULinkAccountUserWidget> LinkAccountWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
+	TSubclassOf<UBountiesUserWidget> BountiesWidgetClass;
 
 protected:
 
@@ -48,6 +52,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* CopyCodeButton;
 
+	/** UButton for viewing the player's referral bounties */
+	UPROPERTY(meta = (BindWidget))
+	UButton* ViewBoutniesButton;
+	
 	/** UButton for Nexus account linking information */
 	UPROPERTY(meta = (BindWidget))
 	UButton* LinkAccountButton;	
@@ -75,4 +83,8 @@ private:
 	/** Callback for when the link account button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnLinkAccountButtonPressed();	
+
+	/** Callback for when the view bounties button is pressed */
+	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
+	void OnViewBountiesButtonPressed();	
 };
