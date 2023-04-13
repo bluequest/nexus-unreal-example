@@ -20,7 +20,7 @@ void UBountiesEntryUserWidget::OnCollectBountyButtonPressed()
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Bounty Collected!")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Bounty Collected!")));
 	}
 
 	RemoveFromParent();

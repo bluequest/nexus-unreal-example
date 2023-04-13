@@ -55,6 +55,6 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 	
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Creator Code Submitted!")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator Code Submitted!")));
 	}
 }

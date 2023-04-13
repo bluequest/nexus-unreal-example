@@ -80,7 +80,7 @@ void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Referral Code Submitted!")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Referral Code Submitted!")));
 	}
 }
 
@@ -93,7 +93,7 @@ void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Referral code copied!")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Referral code copied!")));
 	}
 }
 
