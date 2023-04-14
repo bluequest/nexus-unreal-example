@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "NexusSampleProjectCharacter.h"
 #include "UObject/ConstructorHelpers.h"
@@ -9,6 +9,9 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
 #include "Engine/World.h"
 
 ANexusSampleProjectCharacter::ANexusSampleProjectCharacter()
@@ -43,6 +46,74 @@ ANexusSampleProjectCharacter::ANexusSampleProjectCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+}
+
+// Input
+void ANexusSampleProjectCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	{
+		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(PC->Player))
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				if (InputMapping.ToSoftObjectPath().IsValid())
+				{
+					InputSystem->AddMappingContext(InputMapping.LoadSynchronous(), 100);
+				}
+			}
+
+		}
+	}
+
+	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInput->BindAction(PauseAction.LoadSynchronous(), ETriggerEvent::Triggered, this, &ANexusSampleProjectCharacter::Pause);
+	}
+}
+
+void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
+{
+	if (IsValid(PauseMenuWidget))
+	{
+		PauseMenuWidget->RemoveFromParent();
+		PauseMenuWidget = nullptr;
+
+		if (IsValid(CreatorSupportWidget))
+		{
+			CreatorSupportWidget->RemoveFromParent();
+			CreatorSupportWidget = nullptr;
+		}
+
+		if (IsValid(LinkAccountWidget))
+		{
+			LinkAccountWidget->RemoveFromParent();
+			LinkAccountWidget = nullptr;
+		}
+
+		if (IsValid(BountiesWidget))
+		{	
+			BountiesWidget->RemoveFromParent();
+			BountiesWidget = nullptr;
+		}
+
+		if (IsValid(ReferralsBountiesMenuWidget))
+		{
+			ReferralsBountiesMenuWidget->RemoveFromParent();
+			ReferralsBountiesMenuWidget = nullptr;
+		}
+	}
+	else
+	{
+		ensure (IsValid(PauseMenuWidgetClass));
+		PauseMenuWidget = CreateWidget<UPauseMenuUserWidget>(GetWorld(), PauseMenuWidgetClass);
+		if (IsValid(PauseMenuWidget))
+		{
+			PauseMenuWidget->AddToViewport();
+		}
+	}
 }
 
 void ANexusSampleProjectCharacter::Tick(float DeltaSeconds)

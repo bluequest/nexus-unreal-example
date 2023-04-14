@@ -1,9 +1,14 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
+#include "UI/PauseMenuUserWidget.h"
+#include "UI/CreatorSupportUserWidget.h"
+#include "UI/BountiesUserWidget.h"
+#include "UI/ReferralsBountiesMenuUserWidget.h"
 #include "NexusSampleProjectCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -21,6 +26,37 @@ public:
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TSoftObjectPtr<UInputMappingContext> InputMapping;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TSoftObjectPtr<UInputAction> PauseAction;
+
+	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
+	TSubclassOf<UPauseMenuUserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UPauseMenuUserWidget* PauseMenuWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UReferralsBountiesMenuUserWidget* ReferralsBountiesMenuWidget;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UCreatorSupportUserWidget* CreatorSupportWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	ULinkAccountUserWidget* LinkAccountWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UBountiesUserWidget* BountiesWidget;
+
+protected:
+	// ~APawn interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// ~End APawn interface
+
+	void Pause(const FInputActionInstance& Instance);
 
 private:
 	/** Top down camera */
