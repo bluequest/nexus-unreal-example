@@ -19,7 +19,8 @@ public class NexusSampleProject : ModuleRules
 			"AIModule", 
 			"Niagara", 
 			"EnhancedInput", 
-			"ApplicationCore" 
-		});
+			"ApplicationCore",
+            "NexusUnrealSDK"
+        });
     }
 }
