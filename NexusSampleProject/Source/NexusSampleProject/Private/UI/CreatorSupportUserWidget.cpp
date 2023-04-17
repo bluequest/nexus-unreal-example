@@ -51,10 +51,46 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 		CreatorCodeInputTextBox->SetText(FText());
 	}
 
-	// #TODO Add SDK call
+	// #TODO Remove me! Just used for testing cat facts API
+	//OnGetGatFactsCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnGetCatFactsComplete);
+	//NexusSDK::GetCatFacts(32, 32, OnGetGatFactsCompleteDelegate);
+
+	// #TODO Replace SDK call with https://docs.nexus.gg/reference/rest-api/api-reference/referrals/create
+
+	// #TODO Replace logic when Unreal SDK template is in.
+	//OnSubmitReferralCodeCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnSubmitReferralCodeComplete);
+	//NexusSDK::SubmitReferralCode(32, 32, OnSubmitReferralCodeCompleteDelegate);
+	
+	// #TODO Replace logic below when NexusSDK::SubmitReferralCode is in
+	FString TestGroupId = TEXT("TestGroupId");
+	FString TestGroupName = TEXT("TestGroupName");
+	OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
 	
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator Code Submitted!")));
+	}
+}
+
+// #TODO Remove me! Just used for testing cat facts API
+void UCreatorSupportUserWidget::OnGetCatFactsComplete(TArray<FString>& FatFactsArray, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Get cat facts successful!")));
+		}
+	}
+}
+
+void UCreatorSupportUserWidget::OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful)
+{
+	if (bWasSuccessful && !GroupId.IsEmpty() && !GroupName.IsEmpty()) 
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Submit creator (referral) code success! Response - GroupId: %s, GroupName: %s"), *GroupId, *GroupName));
+		}
 	}
 }

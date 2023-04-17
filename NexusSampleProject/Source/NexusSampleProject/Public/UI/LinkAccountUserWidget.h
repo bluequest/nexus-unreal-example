@@ -30,13 +30,23 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* PlayerReferralCode;
 
+	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when retrieving player's referral code completes */
+	//NexusSDK::FOnGetReferralCodeComplete OnGetReferralCodeCompleteDelegate;
+
 public:
 
 	void SetupInitialFocus(APlayerController* Controller) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	void UpdatePlayerReferralCode();
 
 private:
 	
 	/** Callback for when the back button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Link Account Menu Buttons")
 	void OnBackButtonPressed();
+
+	/** Callback for when retrieving the player's referral code completes */
+	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	void OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful);
 };

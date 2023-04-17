@@ -22,6 +22,17 @@ void UReferralsBountiesMenuUserWidget::SetupInitialFocus(APlayerController* Cont
 	Controller->SetInputMode(GameAndUIMode);
 }
 
+void UReferralsBountiesMenuUserWidget::UpdatePlayerReferralCode()
+{
+	// #TODO Replace logic when Unreal SDK template is in.
+	//OnGetReferralCodeCompleteDelegate.BindUObject(this, &UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete);
+	//NexusSDK::GetPlayerReferralCode(32, 32, OnGetReferralCodeCompleteDelegate);
+
+	// #TODO Replace logic below when NexusSDK::GetPlayerReferralCode is in
+	FString TestString = TEXT("Testing!");
+	OnGetPlayerReferralCodeComplete(TestString, true);
+}
+
 void UReferralsBountiesMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -53,7 +64,8 @@ void UReferralsBountiesMenuUserWidget::NativeConstruct()
 
 	// #TODO Generate auth code (https://api.nexus.gg/v1/referrals/player/{playerId}/authCode)
 
-	// #TODO Query player's referral code (https://api.nexus.gg/v1/referrals/code)
+	// #TODO Query player's referral code (https://api.nexus.gg/v1/referrals/player/{playerId}/code)
+	UpdatePlayerReferralCode();
 
 	// #TODO If none exists, generate code for a user (https://api.nexus.gg/v1/referrals/code)
 
@@ -76,12 +88,14 @@ void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 		ReferralCodeInputTextBox->SetText(FText());
 	}
 
-	// #TODO Add SDK call
+	// #TODO Replace logic when Unreal SDK template is in.
+	//OnSubmitReferralCodeCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnSubmitReferralCodeComplete);
+	//NexusSDK::SubmitReferralCode(32, 32, OnSubmitReferralCodeCompleteDelegate);
 
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Referral Code Submitted!")));
-	}
+	// #TODO Replace logic below when NexusSDK::SubmitReferralCode is in
+	FString TestGroupId = TEXT("TestGroupId");
+	FString TestGroupName = TEXT("TestGroupName");
+	OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
 }
 
 void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
@@ -123,6 +137,33 @@ void UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed()
 		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
 		{
 			CharacterRef->BountiesWidget = BountiesWidgetRef;
+		}
+	}
+}
+
+void UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		if (ensure(IsValid(PlayerReferralCode))) 
+		{
+			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
+		}
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("GetReferralCode successful!")));
+		}
+	}
+}
+
+void UReferralsBountiesMenuUserWidget::OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful)
+{
+	if (bWasSuccessful && !GroupId.IsEmpty() && !GroupName.IsEmpty())
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Submit referral code success! Response - GroupId: %s, GroupName: %s"), *GroupId, *GroupName));
 		}
 	}
 }
