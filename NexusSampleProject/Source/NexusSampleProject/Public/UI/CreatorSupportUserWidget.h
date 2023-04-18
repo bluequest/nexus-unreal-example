@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "NexusPrototype.h"
+#include "GameFramework/SaveGame.h"
 #include "UI/NexusSampleProjectBaseWidget.h"
 #include "UI/LinkAccountUserWidget.h"
 #include "CreatorSupportUserWidget.generated.h"
@@ -11,6 +12,7 @@
 class UTextBlock;
 class UButton;
 class UEditableTextBox;
+class UNexusSampleProjectSaveGame;
 
 /**
  * Widget used to utilize Nexus Support-A-Creator functionality 
@@ -22,6 +24,8 @@ class NEXUSSAMPLEPROJECT_API UCreatorSupportUserWidget : public UNexusSampleProj
 
 public:
 	void SetupInitialFocus(APlayerController* Controller) override;
+	UPROPERTY(BlueprintReadOnly, Category = "Save Game")
+	UNexusSampleProjectSaveGame* SaveGameInstance;
 
 protected:
 
@@ -57,4 +61,7 @@ private:
 
 	/** NexusAPI - Callback for when Cat Facts are retrieved */
 	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
+
+	/** Callback for when the save game to slot completes */
+	void OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful);
 };

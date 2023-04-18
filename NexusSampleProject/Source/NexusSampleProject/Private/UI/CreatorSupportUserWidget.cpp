@@ -4,9 +4,14 @@
 #include "UI/CreatorSupportUserWidget.h"
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
+#include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
+
+// #TODO Move this to a global file
+#define SAVELOAD_SLOT_NAME TEXT("DefaultSlot")
 
 void UCreatorSupportUserWidget::SetupInitialFocus(APlayerController* Controller)
 {
@@ -62,10 +67,12 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 		NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetGatFactsCompleteDelegate);
 
 		// #TODO save the code on disk, then on purchase (transactions page), reference this code and call the create new sale attributed to a creator endpoint (https://api.nexus.gg/v1/attributions/transactions)
-	
-		if (GEngine)
+		SaveGameInstance = Cast<UNexusSampleProjectSaveGame>(UGameplayStatics::CreateSaveGameObject(UNexusSampleProjectSaveGame::StaticClass()));
+		if (SaveGameInstance) 
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator Code saved to settings!")));
+			SaveGameInstance->SaveSlotName = SAVELOAD_SLOT_NAME;
+			SaveGameInstance->CreatorCode = CreatorCodeInputTextBox->GetText().ToString();
+			UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex, FAsyncSaveGameToSlotDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete));
 		}
 
 		CreatorCodeInputTextBox->SetText(FText());
@@ -96,4 +103,25 @@ void UCreatorSupportUserWidget::OnGetCatFactsComplete(const NexusSDK::FGetCatFac
 	{
 		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get cat facts failed!"));
 	}
-}	
+}
+
+void UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful)
+{
+	if (bWasSuccessful) 
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator Code saved to settings!")));
+		}
+	}
+	else 
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Creator Code failed to save to settings!")));
+		}
+	}
+}
+
+// #TODO Move this to a global file
+#undef SAVELOAD_SLOT_NAME
