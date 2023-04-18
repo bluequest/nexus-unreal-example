@@ -46,7 +46,6 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Link Account Menu Buttons")
 	void OnBackButtonPressed();
 
-	/** Callback for when retrieving the player's referral code completes */
-	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	/** NexusAPI - Callback for when retrieving the player's referral code completes */
 	void OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful);
 };

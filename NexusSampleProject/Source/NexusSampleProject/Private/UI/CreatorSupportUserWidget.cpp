@@ -52,8 +52,11 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 	}
 
 	// #TODO Remove me! Just used for testing cat facts API
-	//OnGetGatFactsCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnGetCatFactsComplete);
-	//NexusSDK::GetCatFacts(32, 32, OnGetGatFactsCompleteDelegate);
+	OnGetGatFactsCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnGetCatFactsComplete);
+	NexusSDK::FGetCatFactsRequest GetCatFactsRequest;
+	GetCatFactsRequest.MaxLength = 32;
+	GetCatFactsRequest.Limit = 32;
+	NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetGatFactsCompleteDelegate);
 
 	// #TODO Replace SDK call with https://docs.nexus.gg/reference/rest-api/api-reference/referrals/create
 
@@ -62,9 +65,9 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 	//NexusSDK::SubmitReferralCode(32, 32, OnSubmitReferralCodeCompleteDelegate);
 	
 	// #TODO Replace logic below when NexusSDK::SubmitReferralCode is in
-	FString TestGroupId = TEXT("TestGroupId");
-	FString TestGroupName = TEXT("TestGroupName");
-	OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
+	//FString TestGroupId = TEXT("TestGroupId");
+	//FString TestGroupName = TEXT("TestGroupName");
+	//OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
 	
 	if (GEngine)
 	{
@@ -73,9 +76,9 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 }
 
 // #TODO Remove me! Just used for testing cat facts API
-void UCreatorSupportUserWidget::OnGetCatFactsComplete(TArray<FString>& FatFactsArray, bool bWasSuccessful)
+void UCreatorSupportUserWidget::OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response)
 {
-	if (bWasSuccessful)
+	if (Response.bSuccess)
 	{
 		if (GEngine)
 		{

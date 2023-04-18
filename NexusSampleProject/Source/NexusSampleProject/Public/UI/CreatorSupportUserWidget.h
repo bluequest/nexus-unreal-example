@@ -55,11 +55,9 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnSubmitButtonPressed();
 
-	/** Callback for when getting cat facts completes */
-	UFUNCTION(BlueprintCallable, Category = "Nexus API")
-	void OnGetCatFactsComplete(TArray<FString>& FatFactsArray, bool bWasSuccessful);
+	/** NexusAPI - Callback for when Cat Facts are retrieved */
+	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
 
-	/** Callback for when submitting referral or creator code completes */
-	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	/** NexusAPI - Callback for when a referral code is submitted */
 	void OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful);
 };
