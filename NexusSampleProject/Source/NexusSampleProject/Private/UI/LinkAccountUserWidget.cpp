@@ -3,6 +3,7 @@
 
 #include "UI/LinkAccountUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
+#include "NexusSampleProject/NexusSampleProject.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 
@@ -61,9 +62,16 @@ void ULinkAccountUserWidget::OnGetPlayerReferralCodeComplete(FString& ReferralCo
 			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
 		}
 
+		// Logging
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("GetReferralCode successful!")));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Get player referral code succeeded! ReferralCode: %s"), *ReferralCode));
 		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Get player referral code succeeded! ReferralCode: %s"), *ReferralCode);
+	}
+	else 
+	{
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get player referral code failed!"));
 	}
 }

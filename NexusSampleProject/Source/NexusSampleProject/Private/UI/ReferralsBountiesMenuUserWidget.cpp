@@ -4,6 +4,7 @@
 #include "UI/ReferralsBountiesMenuUserWidget.h"
 #include "UI/BountiesUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
+#include "NexusSampleProject/NexusSampleProject.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Runtime/ApplicationCore/Public/HAL/PlatformApplicationMisc.h"
@@ -145,15 +146,22 @@ void UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete(FString& 
 {
 	if (bWasSuccessful)
 	{
-		if (ensure(IsValid(PlayerReferralCode))) 
+		if (ensure(IsValid(PlayerReferralCode)))
 		{
 			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
 		}
 
+		// Logging
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("GetReferralCode successful!")));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Get player referral code succeeded! ReferralCode: %s"), *ReferralCode));
 		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Get player referral code succeeded! ReferralCode: %s"), *ReferralCode);
+	}
+	else
+	{
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get player referral code failed!"));
 	}
 }
 
@@ -161,9 +169,16 @@ void UReferralsBountiesMenuUserWidget::OnSubmitReferralCodeComplete(FString& Gro
 {
 	if (bWasSuccessful && !GroupId.IsEmpty() && !GroupName.IsEmpty())
 	{
+		// Logging
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Submit referral code success! Response - GroupId: %s, GroupName: %s"), *GroupId, *GroupName));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Submit creator (referral) code success! Response - GroupId: %s, GroupName: %s"), *GroupId, *GroupName));
 		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Submit referral code succeeded! Response - GroupId: %s, GroupName : %s"), *GroupId, *GroupName);
+	}
+	else
+	{
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Submit referral code failed!"));
 	}
 }

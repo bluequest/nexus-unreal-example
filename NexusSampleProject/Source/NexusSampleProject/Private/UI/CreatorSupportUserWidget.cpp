@@ -2,6 +2,7 @@
 
 
 #include "UI/CreatorSupportUserWidget.h"
+#include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -80,20 +81,41 @@ void UCreatorSupportUserWidget::OnGetCatFactsComplete(const NexusSDK::FGetCatFac
 {
 	if (Response.bSuccess)
 	{
+		// Logging
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Get cat facts successful!")));
 		}
+
+		FString FactListString = TEXT("");
+		for (FString Fact : Response.Facts)
+		{
+			FactListString.Append(*Fact);
+			FactListString.Append("\n");
+		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Get cat facts successful! Fact List: \n%s"), *FactListString);
 	}
-}
+	else 
+	{
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get cat facts failed!"));
+	}
+}	
 
 void UCreatorSupportUserWidget::OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful)
 {
 	if (bWasSuccessful && !GroupId.IsEmpty() && !GroupName.IsEmpty()) 
 	{
+		// Logging
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Submit creator (referral) code success! Response - GroupId: %s, GroupName: %s"), *GroupId, *GroupName));
 		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Submit creator (referral) code succeeded! Response - GroupId: %s, GroupName : %s"), *GroupId, *GroupName);
 	}
+	else 
+	{
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Submit creator (referral) code failed!"));
+	}	
 }
