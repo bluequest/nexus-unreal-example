@@ -9,17 +9,17 @@ void UPauseMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (IsValid(BackButton))
+	if (ensure(IsValid(BackButton)))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnBackButtonPressed);
 	}
 
-	if (IsValid(CreatorSupportButton))
+	if (ensure(IsValid(CreatorSupportButton)))
 	{
 		CreatorSupportButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnCreatorSupportButtonPressed);
 	}
 
-	if (IsValid(ReferralsBountiesButton))
+	if (ensure(IsValid(ReferralsBountiesButton)))
 	{
 		ReferralsBountiesButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnReferralsBountiesButtonPressed);
 	}
@@ -69,7 +69,7 @@ void UPauseMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (IsValid(BackButton))
+	if (ensure(IsValid(BackButton)))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}

@@ -38,27 +38,27 @@ void UReferralsBountiesMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (IsValid(BackButton))
+	if (ensure(IsValid(BackButton)))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnBackButtonPressed);
 	}
 
-	if (IsValid(SubmitButton))
+	if (ensure(IsValid(SubmitButton)))
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed);
 	}
 
-	if (IsValid(CopyCodeButton))
+	if (ensure(IsValid(CopyCodeButton)))
 	{
 		CopyCodeButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnCopyButtonPressed);
 	}
 
-	if (IsValid(LinkAccountButton))
+	if (ensure(IsValid(LinkAccountButton)))
 	{
 		LinkAccountButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed);
 	}
 
-	if (IsValid(ViewBoutniesButton))
+	if (ensure(IsValid(ViewBoutniesButton)))
 	{
 		ViewBoutniesButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed);
 	}
@@ -84,24 +84,29 @@ void UReferralsBountiesMenuUserWidget::OnBackButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 {
-	if (IsValid(ReferralCodeInputTextBox))
+	if (ensure(IsValid(ReferralCodeInputTextBox)))
 	{
+		if (ReferralCodeInputTextBox->GetText().IsEmpty())
+		{
+			return;
+		}
+
+		// #TODO Replace logic when Unreal SDK template is in.
+		//OnSubmitReferralCodeCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnSubmitReferralCodeComplete);
+		//NexusSDK::SubmitReferralCode(FString GroupId, OnSubmitReferralCodeCompleteDelegate);
+
+		// #TODO Replace logic below when NexusSDK::SubmitReferralCode is in
+		FString TestGroupId = TEXT("TestGroupId");
+		FString TestGroupName = TEXT("TestGroupName");
+		OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
+	
 		ReferralCodeInputTextBox->SetText(FText());
 	}
-
-	// #TODO Replace logic when Unreal SDK template is in.
-	//OnSubmitReferralCodeCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnSubmitReferralCodeComplete);
-	//NexusSDK::SubmitReferralCode(32, 32, OnSubmitReferralCodeCompleteDelegate);
-
-	// #TODO Replace logic below when NexusSDK::SubmitReferralCode is in
-	FString TestGroupId = TEXT("TestGroupId");
-	FString TestGroupName = TEXT("TestGroupName");
-	OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
 }
 
 void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
 {
-	if (IsValid(PlayerReferralCode))
+	if (ensure(IsValid(PlayerReferralCode)))
 	{
 		FPlatformApplicationMisc::ClipboardCopy(*PlayerReferralCode->GetText().ToString());
 	}

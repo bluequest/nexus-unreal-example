@@ -11,7 +11,7 @@ void ULinkAccountUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (IsValid(BackButton))
+	if (ensure(IsValid(BackButton)))
 	{
 		BackButton->OnClicked.AddDynamic(this, &ULinkAccountUserWidget::OnBackButtonPressed);
 	}
@@ -25,7 +25,7 @@ void ULinkAccountUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (IsValid(BackButton))
+	if (ensure(IsValid(BackButton)))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}

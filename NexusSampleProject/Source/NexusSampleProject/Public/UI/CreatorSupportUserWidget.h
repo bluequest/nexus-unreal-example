@@ -57,7 +57,4 @@ private:
 
 	/** NexusAPI - Callback for when Cat Facts are retrieved */
 	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
-
-	/** NexusAPI - Callback for when a referral code is submitted */
-	void OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful);
 };
