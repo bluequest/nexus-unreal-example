@@ -44,7 +44,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UEditableTextBox* CreatorCodeInputTextBox;
 
-	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when retrieving cat facts completes */
+	/** #TODO Remove me when Unreal SDK is in. Delegate used for when retrieving cat facts completes */
 	NexusSDK::FOnGetCatFactsComplete OnGetGatFactsCompleteDelegate;
 	// #TODO ~End remove me
 
@@ -58,7 +58,7 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnSubmitButtonPressed();
 
-	/** NexusAPI - Callback for when Cat Facts are retrieved */
+	/** #TODO Remove me once Unreal SDK is in. NexusAPI - Callback for when Cat Facts are retrieved */
 	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
 
 	/** Callback for when saving the save game to slot completes */

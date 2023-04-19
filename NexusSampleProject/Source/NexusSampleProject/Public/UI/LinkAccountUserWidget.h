@@ -30,7 +30,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* PlayerReferralCode;
 
-	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when retrieving player's referral code completes */
+	/** #TODO Remove me when Unreal SDK is in. Delegate used for when retrieving player's referral code completes */
 	//NexusSDK::FOnGetReferralCodeComplete OnGetReferralCodeCompleteDelegate;
 
 public:

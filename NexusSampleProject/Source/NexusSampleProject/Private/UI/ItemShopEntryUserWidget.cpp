@@ -2,6 +2,7 @@
 
 
 #include "UI/ItemShopEntryUserWidget.h"
+#include "NexusSampleProject/NexusSampleProject.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 
@@ -17,10 +18,32 @@ void UItemShopEntryUserWidget::NativeConstruct()
 
 void UItemShopEntryUserWidget::OnPurchaseItemButtonPressed()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Item Purchased!")));
-	}
+	// #TODO Replace logic when Unreal SDK template is in.
+	//OnCreateNewSaleTransactionCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnCreateNewSaleTransactionComplete);
+	//NexusSDK::CreateNewSaleTransaction(FString GroupId, OnCreateNewSaleTransactionCompleteDelegate);
+	OnCreateNewSaleTransactionComplete(true);
+}
 
-	RemoveFromParent();
+void UItemShopEntryUserWidget::OnCreateNewSaleTransactionComplete(/* FTransactionStruct TransactionInfo, */ bool bWasSuccessful)
+{
+	if (bWasSuccessful) 
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Item Purchased, and attributed to creator!")));
+		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Item Purchased, and attributed to creator!"));
+
+		RemoveFromParent();
+	}
+	else 
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to purchase item, and attribute to creator!")));
+		}
+
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Failed to purchase item, and attribute to creator!"));
+	}
 }

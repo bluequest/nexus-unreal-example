@@ -97,9 +97,9 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Referrals & Bounties Menu Buttons")
 	void OnViewBountiesButtonPressed();	
 
-	/** NexusAPI - Callback for when retrieving the player's referral code completes */
+	/** #TODO NexusAPI - Callback for when retrieving the player's referral code completes */
 	void OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful);
 
-	/** NexusAPI - Callback for when submitting referral or creator code completes */
+	/** #TODO NexusAPI - Callback for when submitting referral or creator code completes */
 	void OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful);
 };
