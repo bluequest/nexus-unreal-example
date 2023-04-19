@@ -5,12 +5,10 @@
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
+#include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
-
-// #TODO Move this to a global file
-#define SAVELOAD_SLOT_NAME TEXT("DefaultSlot")
 
 void UItemShopMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 {
@@ -70,6 +68,3 @@ void UItemShopMenuUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& Slo
 		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
 	}
 }
-
-// #TODO Move this to a global file
-#undef SAVELOAD_SLOT_NAME

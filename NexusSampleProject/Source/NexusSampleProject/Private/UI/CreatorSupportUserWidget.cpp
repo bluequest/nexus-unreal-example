@@ -5,13 +5,11 @@
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
+#include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
-
-// #TODO Move this to a global file
-#define SAVELOAD_SLOT_NAME TEXT("DefaultSlot")
 
 void UCreatorSupportUserWidget::SetupInitialFocus(APlayerController* Controller)
 {
@@ -38,6 +36,11 @@ void UCreatorSupportUserWidget::NativeConstruct()
 	if (ensure(IsValid(SubmitButton)))
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnSubmitButtonPressed);
+	}
+
+	if (ensure(IsValid(CreatorCodeInputTextBox)))
+	{
+		CreatorCodeInputTextBox->OnTextChanged.AddDynamic(this, &UCreatorSupportUserWidget::OnTextChanged);
 	}
 
 	// Load creator code
@@ -74,12 +77,14 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 		NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetGatFactsCompleteDelegate);
 		// #TODO ~End remove me
 
+		// #TODO Query Nexus creators using (https://api.nexus.gg/v1/attributions/creators) and check if any creator code matches player's input
+
 		// Save the code on disk, so that during purchasing (transactions page) we can reference this code and call the create new sale attributed to a creator endpoint (https://api.nexus.gg/v1/attributions/transactions)
 		SaveGameInstance = Cast<UNexusSampleProjectSaveGame>(UGameplayStatics::CreateSaveGameObject(UNexusSampleProjectSaveGame::StaticClass()));
 		if (SaveGameInstance) 
 		{
 			SaveGameInstance->SaveSlotName = SAVELOAD_SLOT_NAME;
-			SaveGameInstance->CreatorCode = CreatorCodeInputTextBox->GetText().ToString();
+			SaveGameInstance->CreatorCode = CreatorCodeInputTextBox->GetText().ToString().ToUpper();
 			SaveGameInstance->UserIndex = GetOwningLocalPlayer()->GetLocalPlayerIndex();
 			UGameplayStatics::AsyncSaveGameToSlot(
 				SaveGameInstance, 
@@ -90,6 +95,15 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 		}
 
 		CreatorCodeInputTextBox->SetText(FText());
+	}
+}
+
+void UCreatorSupportUserWidget::OnTextChanged(const FText& Text)
+{
+	// Set character limit. +1 is to account for left chop
+	if (Text.ToString().Len() >= CreatorCodeCharacterLimit+1) 
+	{
+		CreatorCodeInputTextBox->SetText(FText::FromString(Text.ToString().LeftChop(1)));
 	}
 }
 
@@ -146,7 +160,7 @@ void UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& S
 {
 	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame)) 
 	{
-		CreatorCodeInputTextBox->SetText(FText::FromString(FString::Printf(TEXT("Current Code: %s"), *SaveGameRef->CreatorCode)));
+		CreatorCodeInputTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
 		
 		if (GEngine)
 		{
@@ -156,6 +170,3 @@ void UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& S
 		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
 	}
 }
-
-// #TODO Move this to a global file
-#undef SAVELOAD_SLOT_NAME

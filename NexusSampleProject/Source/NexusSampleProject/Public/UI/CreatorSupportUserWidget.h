@@ -44,6 +44,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UEditableTextBox* CreatorCodeInputTextBox;
 
+	/** Int to set creator code character limit */
+	UPROPERTY(EditAnywhere, Category = "Creator Support Menu")
+	int32 CreatorCodeCharacterLimit = 6;
+
 	/** #TODO Remove me when Unreal SDK is in. Delegate used for when retrieving cat facts completes */
 	NexusSDK::FOnGetCatFactsComplete OnGetGatFactsCompleteDelegate;
 	// #TODO ~End remove me
@@ -57,6 +61,10 @@ private:
 	/** Callback for when the submit button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnSubmitButtonPressed();
+
+	/** Callback for when CreatorCodeInputTextBox text changed */
+	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
+	void OnTextChanged(const FText& Text);
 
 	/** #TODO Remove me once Unreal SDK is in. NexusAPI - Callback for when Cat Facts are retrieved */
 	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
