@@ -39,6 +39,13 @@ void UCreatorSupportUserWidget::NativeConstruct()
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnSubmitButtonPressed);
 	}
+
+	// Load creator code
+	UGameplayStatics::AsyncLoadGameFromSlot(
+		SAVELOAD_SLOT_NAME, 
+		GetOwningLocalPlayer()->GetLocalPlayerIndex(), 
+		FAsyncLoadGameFromSlotDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete)
+		);
 }
 
 void UCreatorSupportUserWidget::OnBackButtonPressed()
@@ -59,20 +66,27 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 			return;
 		}
 
-		// #TODO Remove me! Just used for testing cat facts API
+		// #TODO ~Remove me! Just used for testing cat facts API
 		OnGetGatFactsCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnGetCatFactsComplete);
 		NexusSDK::FGetCatFactsRequest GetCatFactsRequest;
 		GetCatFactsRequest.MaxLength = 32;
 		GetCatFactsRequest.Limit = 32;
 		NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetGatFactsCompleteDelegate);
+		// #TODO ~End remove me
 
-		// #TODO save the code on disk, then on purchase (transactions page), reference this code and call the create new sale attributed to a creator endpoint (https://api.nexus.gg/v1/attributions/transactions)
+		// Save the code on disk, so that during purchasing (transactions page) we can reference this code and call the create new sale attributed to a creator endpoint (https://api.nexus.gg/v1/attributions/transactions)
 		SaveGameInstance = Cast<UNexusSampleProjectSaveGame>(UGameplayStatics::CreateSaveGameObject(UNexusSampleProjectSaveGame::StaticClass()));
 		if (SaveGameInstance) 
 		{
 			SaveGameInstance->SaveSlotName = SAVELOAD_SLOT_NAME;
 			SaveGameInstance->CreatorCode = CreatorCodeInputTextBox->GetText().ToString();
-			UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, SaveGameInstance->SaveSlotName, SaveGameInstance->UserIndex, FAsyncSaveGameToSlotDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete));
+			SaveGameInstance->UserIndex = GetOwningLocalPlayer()->GetLocalPlayerIndex();
+			UGameplayStatics::AsyncSaveGameToSlot(
+				SaveGameInstance, 
+				SaveGameInstance->SaveSlotName, 
+				SaveGameInstance->UserIndex, 
+				FAsyncSaveGameToSlotDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete)
+				);
 		}
 
 		CreatorCodeInputTextBox->SetText(FText());
@@ -104,6 +118,7 @@ void UCreatorSupportUserWidget::OnGetCatFactsComplete(const NexusSDK::FGetCatFac
 		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get cat facts failed!"));
 	}
 }
+// #TODO ~End remove me
 
 void UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful)
 {
@@ -113,6 +128,8 @@ void UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete(const FString& Slo
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator Code saved to settings!")));
 		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code saved to disk"));
 	}
 	else 
 	{
@@ -120,6 +137,23 @@ void UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete(const FString& Slo
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Creator Code failed to save to settings!")));
 		}
+
+		UE_LOG(LogNexusSampleProject, Warning, TEXT("Creator Code failed to save to disk"));
+	}
+}
+
+void UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame)
+{
+	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame)) 
+	{
+		CreatorCodeInputTextBox->SetText(FText::FromString(FString::Printf(TEXT("Current Code: %s"), *SaveGameRef->CreatorCode)));
+		
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator code loaded from save game!")));
+		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
 	}
 }
 

@@ -24,6 +24,7 @@ class NEXUSSAMPLEPROJECT_API UCreatorSupportUserWidget : public UNexusSampleProj
 
 public:
 	void SetupInitialFocus(APlayerController* Controller) override;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Save Game")
 	UNexusSampleProjectSaveGame* SaveGameInstance;
 
@@ -45,9 +46,7 @@ protected:
 
 	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when retrieving cat facts completes */
 	NexusSDK::FOnGetCatFactsComplete OnGetGatFactsCompleteDelegate;
-
-	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when submitting referral or creator code completes */
-	//NexusSDK::FOnSubmitReferralCodeComplete OnSubmitReferralCodeCompleteDelegate;
+	// #TODO ~End remove me
 
 private:
 
@@ -62,6 +61,9 @@ private:
 	/** NexusAPI - Callback for when Cat Facts are retrieved */
 	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
 
-	/** Callback for when the save game to slot completes */
+	/** Callback for when saving the save game to slot completes */
 	void OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful);
+
+	/** Callback for when loading the save game to slot completes */
+	void OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame);
 };
