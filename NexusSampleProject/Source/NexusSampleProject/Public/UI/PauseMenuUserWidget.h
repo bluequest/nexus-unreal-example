@@ -6,6 +6,7 @@
 #include "UI/NexusSampleProjectBaseWidget.h"
 #include "UI/ReferralsBountiesMenuUserWidget.h"
 #include "UI/CreatorSupportUserWidget.h"
+#include "UI/ItemShopMenuUserWidget.h"
 #include "PauseMenuUserWidget.generated.h"
 
 class UButton;
@@ -26,6 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UReferralsBountiesMenuUserWidget> ReferralsBountiesMenuWidgetClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
+	TSubclassOf<UItemShopMenuUserWidget> ItemShopMenuWidgetClass;
 
 protected:
 
@@ -43,6 +47,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* ReferralsBountiesButton;
 
+	/** UButton for Item Shop widget */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UButton* ItemShopButton;
+
 private:
 
 	/** Callback for when the back button is pressed */
@@ -56,4 +64,8 @@ private:
 	/** Callback for when the referrals & bounties button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Pause Menu Buttons")
 	void OnReferralsBountiesButtonPressed();
+
+	/** Callback for when the item shop button is pressed */
+	UFUNCTION(BlueprintCallable, Category = "Pause Menu Buttons")
+	void OnItemShopButtonPressed();
 };

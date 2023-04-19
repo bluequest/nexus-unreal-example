@@ -104,6 +104,12 @@ void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
 			ReferralsBountiesMenuWidget->RemoveFromParent();
 			ReferralsBountiesMenuWidget = nullptr;
 		}
+
+		if (IsValid(ItemShopMenuWidget)) 
+		{
+			ItemShopMenuWidget->RemoveFromParent();
+			ItemShopMenuWidget = nullptr;
+		}
 	}
 	else
 	{

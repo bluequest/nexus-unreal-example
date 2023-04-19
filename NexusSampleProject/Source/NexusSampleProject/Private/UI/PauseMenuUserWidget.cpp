@@ -23,6 +23,11 @@ void UPauseMenuUserWidget::NativeConstruct()
 	{
 		ReferralsBountiesButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnReferralsBountiesButtonPressed);
 	}
+
+	if (ensure(IsValid(ItemShopButton))) 
+	{
+		ItemShopButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnItemShopButtonPressed);
+	}
 }
 
 void UPauseMenuUserWidget::OnBackButtonPressed()
@@ -60,6 +65,21 @@ void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
 		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
 		{
 			CharacterRef->ReferralsBountiesMenuWidget = ReferralsBountiesMenuWidget;
+		}
+	}
+}
+
+void UPauseMenuUserWidget::OnItemShopButtonPressed()
+{
+	ensure(IsValid(ItemShopMenuWidgetClass));
+	UItemShopMenuUserWidget* ItemShopMenuWidget = CreateWidget<UItemShopMenuUserWidget>(GetWorld(), ItemShopMenuWidgetClass);
+	if (IsValid(ItemShopMenuWidget))
+	{
+		ItemShopMenuWidget->AddToViewport();
+
+		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		{
+			CharacterRef->ItemShopMenuWidget = ItemShopMenuWidget;
 		}
 	}
 }

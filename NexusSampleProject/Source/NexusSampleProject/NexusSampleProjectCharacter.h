@@ -50,6 +50,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Menus")
 	UBountiesUserWidget* BountiesWidget;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Menus")
+	UItemShopMenuUserWidget* ItemShopMenuWidget;
 
 protected:
 	// ~APawn interface
