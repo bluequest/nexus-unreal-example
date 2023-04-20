@@ -20,7 +20,8 @@ public class NexusSampleProject : ModuleRules
 			"Niagara", 
 			"EnhancedInput", 
 			"ApplicationCore",
-            "NexusUnrealSDK"
+            "NexusUnrealSDK",
+            "HTTP"
         });
     }
 }

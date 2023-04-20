@@ -4,6 +4,8 @@
 #include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
 #include "NexusPrototype.h"
 #include "NexusUnrealSDK.h"
+#include "HttpModule.h"
+#include "HttpManager.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogNexusUESDKTest, Log, All);
 DEFINE_LOG_CATEGORY(LogNexusUESDKTest);
@@ -12,6 +14,7 @@ BEGIN_DEFINE_SPEC(FNexusUESDKTestSpec, "Nexus.AutomationTests", EAutomationTestF
 
 // Add variables here 
 NexusSDK::FOnGetCatFactsComplete OnGetCatFactsComplete;
+float DeltaTime = 0.2f;
 // Add variables here 
 
 END_DEFINE_SPEC(FNexusUESDKTestSpec);
@@ -38,7 +41,7 @@ void FNexusUESDKTestSpec::Define()
 			GetCatFactsRequest.MaxLength = 32;
 			GetCatFactsRequest.Limit = 32;
 
-			// Bind lambda and assign success & done appropriately
+			// Bind lambda and assign flags appropriately
 			OnGetCatFactsComplete.BindLambda(
 				[this, &bGetCatFactsDone, &bGetCatFactsSuccess](const NexusSDK::FGetCatFactsResponse& Response)
 				{
@@ -49,17 +52,12 @@ void FNexusUESDKTestSpec::Define()
 			// Request GetCatFacts 
 			NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetCatFactsComplete);
 
-			/*
-			// #TODO We will need to move this sleep on the HTTP thread somehow or find a way to end this unit test function and wait for a callback
-			// The looping below will just starve the main thread and not allow the http request to be processed
-			//
-			// Loop until a response from GetCatFacts is received 
-			while (!bGetCatFactsDone) 
+			while (!bGetCatFactsDone)
 			{
-				FPlatformProcess::Sleep(0.2f);
+				FPlatformProcess::Sleep(DeltaTime);
+				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
 				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve cat facts..."));
 			}
-			*/
 
 			TestEqual(TEXT("GetCatFacts should be true"), bGetCatFactsSuccess, true);
 			return true;
