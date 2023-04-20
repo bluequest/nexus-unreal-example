@@ -9,19 +9,24 @@ void UPauseMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (IsValid(BackButton))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnBackButtonPressed);
 	}
 
-	if (IsValid(CreatorSupportButton))
+	if (ensureMsgf(IsValid(CreatorSupportButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		CreatorSupportButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnCreatorSupportButtonPressed);
 	}
 
-	if (IsValid(ReferralsBountiesButton))
+	if (ensureMsgf(IsValid(ReferralsBountiesButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		ReferralsBountiesButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnReferralsBountiesButtonPressed);
+	}
+
+	if (ensureMsgf(IsValid(ItemShopButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
+	{
+		ItemShopButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnItemShopButtonPressed);
 	}
 }
 
@@ -36,7 +41,7 @@ void UPauseMenuUserWidget::OnBackButtonPressed()
 
 void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 {
-	ensure(IsValid(CreatorSupportWidgetClass));
+	ensureMsgf(IsValid(CreatorSupportWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
 	UCreatorSupportUserWidget* CreatorSupportWidget = CreateWidget<UCreatorSupportUserWidget>(GetWorld(), CreatorSupportWidgetClass);
 	if (IsValid(CreatorSupportWidget))
 	{
@@ -51,7 +56,7 @@ void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 
 void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
 {
-	ensure(IsValid(ReferralsBountiesMenuWidgetClass));
+	ensureMsgf(IsValid(ReferralsBountiesMenuWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
 	UReferralsBountiesMenuUserWidget* ReferralsBountiesMenuWidget = CreateWidget<UReferralsBountiesMenuUserWidget>(GetWorld(), ReferralsBountiesMenuWidgetClass);
 	if (IsValid(ReferralsBountiesMenuWidget))
 	{
@@ -64,12 +69,27 @@ void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
 	}
 }
 
+void UPauseMenuUserWidget::OnItemShopButtonPressed()
+{
+	ensureMsgf(IsValid(ItemShopMenuWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
+	UItemShopMenuUserWidget* ItemShopMenuWidget = CreateWidget<UItemShopMenuUserWidget>(GetWorld(), ItemShopMenuWidgetClass);
+	if (IsValid(ItemShopMenuWidget))
+	{
+		ItemShopMenuWidget->AddToViewport();
+
+		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		{
+			CharacterRef->ItemShopMenuWidget = ItemShopMenuWidget;
+		}
+	}
+}
+
 void UPauseMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 {
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (IsValid(BackButton))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}

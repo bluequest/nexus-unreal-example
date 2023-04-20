@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UBountiesUserWidget> BountiesWidgetClass;
 
+	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	void UpdatePlayerReferralCode();
+
 protected:
 
 	void NativeConstruct() override;
@@ -66,6 +69,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UProgressBar* ReferralProgressBar;
 
+	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when retrieving player's referral code completes */
+	//NexusSDK::FOnGetReferralCodeComplete OnGetReferralCodeCompleteDelegate;
+
+	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when submitting referral or creator code completes */
+	//NexusSDK::FOnSubmitReferralCodeComplete OnSubmitReferralCodeCompleteDelegate;
+
 private:
 	
 	/** Callback for when the back button is pressed */
@@ -87,4 +96,10 @@ private:
 	/** Callback for when the view bounties button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Referrals & Bounties Menu Buttons")
 	void OnViewBountiesButtonPressed();	
+
+	/** #TODO NexusAPI - Callback for when retrieving the player's referral code completes */
+	void OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful);
+
+	/** #TODO NexusAPI - Callback for when submitting referral or creator code completes */
+	void OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful);
 };

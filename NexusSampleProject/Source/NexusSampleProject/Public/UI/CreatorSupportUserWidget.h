@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NexusPrototype.h"
+#include "GameFramework/SaveGame.h"
 #include "UI/NexusSampleProjectBaseWidget.h"
 #include "UI/LinkAccountUserWidget.h"
 #include "CreatorSupportUserWidget.generated.h"
@@ -10,6 +12,7 @@
 class UTextBlock;
 class UButton;
 class UEditableTextBox;
+class UNexusSampleProjectSaveGame;
 
 /**
  * Widget used to utilize Nexus Support-A-Creator functionality 
@@ -21,6 +24,9 @@ class NEXUSSAMPLEPROJECT_API UCreatorSupportUserWidget : public UNexusSampleProj
 
 public:
 	void SetupInitialFocus(APlayerController* Controller) override;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Save Game")
+	UNexusSampleProjectSaveGame* SaveGameInstance;
 
 protected:
 
@@ -38,6 +44,14 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UEditableTextBox* CreatorCodeInputTextBox;
 
+	/** Int to set creator code character limit */
+	UPROPERTY(EditAnywhere, Category = "Creator Support Menu")
+	int32 CreatorCodeCharacterLimit = 6;
+
+	/** #TODO Remove me when Unreal SDK is in. Delegate used for when retrieving cat facts completes */
+	NexusSDK::FOnGetCatFactsComplete OnGetGatFactsCompleteDelegate;
+	// #TODO ~End remove me
+
 private:
 
 	/** Callback for when the back button is pressed */
@@ -47,4 +61,17 @@ private:
 	/** Callback for when the submit button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
 	void OnSubmitButtonPressed();
+
+	/** Callback for when CreatorCodeInputTextBox text changed */
+	UFUNCTION(BlueprintCallable, Category = "Creator Support Menu Buttons")
+	void OnTextChanged(const FText& Text);
+
+	/** #TODO Remove me once Unreal SDK is in. NexusAPI - Callback for when Cat Facts are retrieved */
+	void OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response);
+
+	/** Callback for when saving the save game to slot completes */
+	void OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful);
+
+	/** Callback for when loading the save game to slot completes */
+	void OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame);
 };
