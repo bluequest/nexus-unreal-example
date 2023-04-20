@@ -11,7 +11,7 @@ void ULinkAccountUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		BackButton->OnClicked.AddDynamic(this, &ULinkAccountUserWidget::OnBackButtonPressed);
 	}
@@ -25,7 +25,7 @@ void ULinkAccountUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -57,7 +57,7 @@ void ULinkAccountUserWidget::OnGetPlayerReferralCodeComplete(FString& ReferralCo
 {
 	if (bWasSuccessful)
 	{
-		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ASSIGN_ENSURE_REASON))
+		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 		{
 			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
 		}

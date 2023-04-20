@@ -15,7 +15,7 @@ void UCreatorSupportUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -27,17 +27,17 @@ void UCreatorSupportUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnBackButtonPressed);
 	}
 
-	if (ensureMsgf(IsValid(SubmitButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(SubmitButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnSubmitButtonPressed);
 	}
 
-	if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		CreatorCodeInputTextBox->OnTextChanged.AddDynamic(this, &UCreatorSupportUserWidget::OnTextChanged);
 	}
@@ -61,7 +61,7 @@ void UCreatorSupportUserWidget::OnBackButtonPressed()
 
 void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 {
-	if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		if (CreatorCodeInputTextBox->GetText().IsEmpty()) 
 		{
@@ -159,7 +159,7 @@ void UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& S
 {
 	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame)) 
 	{
-		if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ASSIGN_ENSURE_REASON)) 
+		if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 		{
 			CreatorCodeInputTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
 

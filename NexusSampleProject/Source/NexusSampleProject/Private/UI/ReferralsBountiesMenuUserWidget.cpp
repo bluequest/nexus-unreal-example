@@ -15,7 +15,7 @@ void UReferralsBountiesMenuUserWidget::SetupInitialFocus(APlayerController* Cont
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -38,27 +38,27 @@ void UReferralsBountiesMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnBackButtonPressed);
 	}
 
-	if (ensureMsgf(IsValid(SubmitButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(SubmitButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed);
 	}
 
-	if (ensureMsgf(IsValid(CopyCodeButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(CopyCodeButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		CopyCodeButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnCopyButtonPressed);
 	}
 
-	if (ensureMsgf(IsValid(LinkAccountButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(LinkAccountButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		LinkAccountButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed);
 	}
 
-	if (ensureMsgf(IsValid(ViewBoutniesButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(ViewBoutniesButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		ViewBoutniesButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed);
 	}
@@ -84,7 +84,7 @@ void UReferralsBountiesMenuUserWidget::OnBackButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 {
-	if (ensureMsgf(IsValid(ReferralCodeInputTextBox), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(ReferralCodeInputTextBox), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		if (ReferralCodeInputTextBox->GetText().IsEmpty())
 		{
@@ -106,7 +106,7 @@ void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
 {
-	if (ensureMsgf(IsValid(PlayerReferralCode), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(PlayerReferralCode), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		FPlatformApplicationMisc::ClipboardCopy(*PlayerReferralCode->GetText().ToString());
 	}
@@ -119,7 +119,7 @@ void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed()
 {
-	ensureMsgf(IsValid(LinkAccountWidgetClass), BP_ASSIGN_ENSURE_REASON);
+	ensureMsgf(IsValid(LinkAccountWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
 	ULinkAccountUserWidget* LinkAccountWidgetRef = CreateWidget<ULinkAccountUserWidget>(GetWorld(), LinkAccountWidgetClass);
 	if (IsValid(LinkAccountWidgetRef))
 	{
@@ -134,7 +134,7 @@ void UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed()
 {
-	ensureMsgf(IsValid(BountiesWidgetClass), BP_ASSIGN_ENSURE_REASON);
+	ensureMsgf(IsValid(BountiesWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
 	UBountiesUserWidget* BountiesWidgetRef = CreateWidget<UBountiesUserWidget>(GetWorld(), BountiesWidgetClass);
 	if (IsValid(BountiesWidgetRef))
 	{
@@ -151,7 +151,7 @@ void UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete(FString& 
 {
 	if (bWasSuccessful)
 	{
-		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ASSIGN_ENSURE_REASON))
+		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 		{
 			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
 		}

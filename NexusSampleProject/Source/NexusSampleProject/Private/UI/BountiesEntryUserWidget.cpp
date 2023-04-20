@@ -10,7 +10,7 @@ void UBountiesEntryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensureMsgf(IsValid(CollectBountyButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(CollectBountyButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		CollectBountyButton->OnClicked.AddDynamic(this, &UBountiesEntryUserWidget::OnCollectBountyButtonPressed);
 	}

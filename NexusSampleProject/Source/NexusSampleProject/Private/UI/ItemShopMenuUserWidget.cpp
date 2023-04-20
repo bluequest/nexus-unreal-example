@@ -14,7 +14,7 @@ void UItemShopMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -36,7 +36,7 @@ void UItemShopMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UItemShopMenuUserWidget::OnBackButtonPressed);
 	}
@@ -57,7 +57,7 @@ void UItemShopMenuUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& Slo
 {
 	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame))
 	{
-		if (ensureMsgf(IsValid(CreatorCodeTextBox), BP_ASSIGN_ENSURE_REASON)) 
+		if (ensureMsgf(IsValid(CreatorCodeTextBox), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 		{
 			CreatorCodeTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
 

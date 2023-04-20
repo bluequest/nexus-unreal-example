@@ -8,7 +8,7 @@ void ANexusSampleProjectHUD::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	ensureMsgf(IsValid(HUDWidgetClass), BP_ASSIGN_ENSURE_REASON);
+	ensureMsgf(IsValid(HUDWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
 	HUDWidget = CreateWidget<UHUDUserWidget>(GetWorld(), HUDWidgetClass);
 	if (IsValid(HUDWidget))
 	{

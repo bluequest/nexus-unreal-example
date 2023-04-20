@@ -15,7 +15,7 @@ void UHUDUserWidget::NativeConstruct()
 
 void UHUDUserWidget::OnPauseButtonPressed()
 {
-	ensureMsgf(IsValid(PauseMenuWidgetClass), BP_ASSIGN_ENSURE_REASON);
+	ensureMsgf(IsValid(PauseMenuWidgetClass), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
 	UPauseMenuUserWidget* PauseMenuWidgetRef = CreateWidget<UPauseMenuUserWidget>(GetWorld(), PauseMenuWidgetClass);
 	if (IsValid(PauseMenuWidgetRef))
 	{

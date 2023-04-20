@@ -10,7 +10,7 @@ void UItemShopEntryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensureMsgf(IsValid(PurchaseItemButton), BP_ASSIGN_ENSURE_REASON))
+	if (ensureMsgf(IsValid(PurchaseItemButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
 		PurchaseItemButton->OnClicked.AddDynamic(this, &UItemShopEntryUserWidget::OnPurchaseItemButtonPressed);
 	}
