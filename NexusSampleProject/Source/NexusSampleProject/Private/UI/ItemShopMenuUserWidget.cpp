@@ -5,7 +5,6 @@
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
-#include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -15,7 +14,7 @@ void UItemShopMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -37,7 +36,7 @@ void UItemShopMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UItemShopMenuUserWidget::OnBackButtonPressed);
 	}
@@ -58,13 +57,16 @@ void UItemShopMenuUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& Slo
 {
 	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame))
 	{
-		CreatorCodeTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
-
-		if (GEngine)
+		if (ensureMsgf(IsValid(CreatorCodeTextBox), BP_ASSIGN_ENSURE_REASON)) 
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator code loaded from save game!")));
-		}
+			CreatorCodeTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
 
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator code loaded from save game!")));
+			}
+
+			UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
+		}
 	}
 }

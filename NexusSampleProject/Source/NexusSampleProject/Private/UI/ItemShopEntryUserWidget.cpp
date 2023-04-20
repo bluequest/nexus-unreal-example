@@ -10,7 +10,7 @@ void UItemShopEntryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(PurchaseItemButton)))
+	if (ensureMsgf(IsValid(PurchaseItemButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		PurchaseItemButton->OnClicked.AddDynamic(this, &UItemShopEntryUserWidget::OnPurchaseItemButtonPressed);
 	}
@@ -44,6 +44,6 @@ void UItemShopEntryUserWidget::OnCreateNewSaleTransactionComplete(/* FTransactio
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to purchase item, and attribute to creator!")));
 		}
 
-		UE_LOG(LogNexusSampleProject, Warning, TEXT("Failed to purchase item, and attribute to creator!"));
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Failed to purchase item, and attribute to creator!"));
 	}
 }

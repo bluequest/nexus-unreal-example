@@ -10,7 +10,7 @@ void UBountiesUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -22,7 +22,7 @@ void UBountiesUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UBountiesUserWidget::OnBackButtonPressed);
 	}

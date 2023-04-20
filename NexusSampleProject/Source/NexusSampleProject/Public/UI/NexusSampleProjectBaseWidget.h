@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
 #include "NexusSampleProjectBaseWidget.generated.h"
 
 /**

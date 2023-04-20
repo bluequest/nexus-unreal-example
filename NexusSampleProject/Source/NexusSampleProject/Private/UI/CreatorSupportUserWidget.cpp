@@ -5,7 +5,6 @@
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
-#include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -16,7 +15,7 @@ void UCreatorSupportUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -28,17 +27,17 @@ void UCreatorSupportUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnBackButtonPressed);
 	}
 
-	if (ensure(IsValid(SubmitButton)))
+	if (ensureMsgf(IsValid(SubmitButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UCreatorSupportUserWidget::OnSubmitButtonPressed);
 	}
 
-	if (ensure(IsValid(CreatorCodeInputTextBox)))
+	if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ASSIGN_ENSURE_REASON))
 	{
 		CreatorCodeInputTextBox->OnTextChanged.AddDynamic(this, &UCreatorSupportUserWidget::OnTextChanged);
 	}
@@ -62,7 +61,7 @@ void UCreatorSupportUserWidget::OnBackButtonPressed()
 
 void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 {
-	if (ensure(IsValid(CreatorCodeInputTextBox)))
+	if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ASSIGN_ENSURE_REASON))
 	{
 		if (CreatorCodeInputTextBox->GetText().IsEmpty()) 
 		{
@@ -129,7 +128,7 @@ void UCreatorSupportUserWidget::OnGetCatFactsComplete(const NexusSDK::FGetCatFac
 	}
 	else 
 	{
-		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get cat facts failed!"));
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Get cat facts failed!"));
 	}
 }
 // #TODO ~End remove me
@@ -152,7 +151,7 @@ void UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete(const FString& Slo
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Creator Code failed to save to settings!")));
 		}
 
-		UE_LOG(LogNexusSampleProject, Warning, TEXT("Creator Code failed to save to disk"));
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Creator Code failed to save to disk"));
 	}
 }
 
@@ -160,13 +159,16 @@ void UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& S
 {
 	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame)) 
 	{
-		CreatorCodeInputTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
-		
-		if (GEngine)
+		if (ensureMsgf(IsValid(CreatorCodeInputTextBox), BP_ASSIGN_ENSURE_REASON)) 
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator code loaded from save game!")));
-		}
+			CreatorCodeInputTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
 
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator code loaded from save game!")));
+			}
+
+			UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
+		}
 	}
 }

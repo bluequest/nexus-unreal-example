@@ -15,7 +15,7 @@ void UReferralsBountiesMenuUserWidget::SetupInitialFocus(APlayerController* Cont
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (IsValid(BackButton))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -38,27 +38,27 @@ void UReferralsBountiesMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnBackButtonPressed);
 	}
 
-	if (ensure(IsValid(SubmitButton)))
+	if (ensureMsgf(IsValid(SubmitButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		SubmitButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed);
 	}
 
-	if (ensure(IsValid(CopyCodeButton)))
+	if (ensureMsgf(IsValid(CopyCodeButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		CopyCodeButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnCopyButtonPressed);
 	}
 
-	if (ensure(IsValid(LinkAccountButton)))
+	if (ensureMsgf(IsValid(LinkAccountButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		LinkAccountButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed);
 	}
 
-	if (ensure(IsValid(ViewBoutniesButton)))
+	if (ensureMsgf(IsValid(ViewBoutniesButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		ViewBoutniesButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed);
 	}
@@ -84,7 +84,7 @@ void UReferralsBountiesMenuUserWidget::OnBackButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 {
-	if (ensure(IsValid(ReferralCodeInputTextBox)))
+	if (ensureMsgf(IsValid(ReferralCodeInputTextBox), BP_ASSIGN_ENSURE_REASON))
 	{
 		if (ReferralCodeInputTextBox->GetText().IsEmpty())
 		{
@@ -106,7 +106,7 @@ void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
 {
-	if (ensure(IsValid(PlayerReferralCode)))
+	if (ensureMsgf(IsValid(PlayerReferralCode), BP_ASSIGN_ENSURE_REASON))
 	{
 		FPlatformApplicationMisc::ClipboardCopy(*PlayerReferralCode->GetText().ToString());
 	}
@@ -119,7 +119,7 @@ void UReferralsBountiesMenuUserWidget::OnCopyButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed()
 {
-	ensure(IsValid(LinkAccountWidgetClass));
+	ensureMsgf(IsValid(LinkAccountWidgetClass), BP_ASSIGN_ENSURE_REASON);
 	ULinkAccountUserWidget* LinkAccountWidgetRef = CreateWidget<ULinkAccountUserWidget>(GetWorld(), LinkAccountWidgetClass);
 	if (IsValid(LinkAccountWidgetRef))
 	{
@@ -134,7 +134,7 @@ void UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed()
 
 void UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed()
 {
-	ensure(IsValid(BountiesWidgetClass));
+	ensureMsgf(IsValid(BountiesWidgetClass), BP_ASSIGN_ENSURE_REASON);
 	UBountiesUserWidget* BountiesWidgetRef = CreateWidget<UBountiesUserWidget>(GetWorld(), BountiesWidgetClass);
 	if (IsValid(BountiesWidgetRef))
 	{
@@ -151,7 +151,7 @@ void UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete(FString& 
 {
 	if (bWasSuccessful)
 	{
-		if (ensure(IsValid(PlayerReferralCode)))
+		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ASSIGN_ENSURE_REASON))
 		{
 			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
 		}
@@ -166,7 +166,12 @@ void UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete(FString& 
 	}
 	else
 	{
-		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get player referral code failed!"));
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Get player referral code failed!"));
+		}
+
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Get player referral code failed!"));
 	}
 }
 
@@ -184,6 +189,6 @@ void UReferralsBountiesMenuUserWidget::OnSubmitReferralCodeComplete(FString& Gro
 	}
 	else
 	{
-		UE_LOG(LogNexusSampleProject, Warning, TEXT("Submit referral code failed!"));
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Submit referral code failed!"));
 	}
 }

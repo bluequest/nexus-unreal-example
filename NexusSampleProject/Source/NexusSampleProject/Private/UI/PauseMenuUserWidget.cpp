@@ -9,22 +9,22 @@ void UPauseMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		BackButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnBackButtonPressed);
 	}
 
-	if (ensure(IsValid(CreatorSupportButton)))
+	if (ensureMsgf(IsValid(CreatorSupportButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		CreatorSupportButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnCreatorSupportButtonPressed);
 	}
 
-	if (ensure(IsValid(ReferralsBountiesButton)))
+	if (ensureMsgf(IsValid(ReferralsBountiesButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		ReferralsBountiesButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnReferralsBountiesButtonPressed);
 	}
 
-	if (ensure(IsValid(ItemShopButton))) 
+	if (ensureMsgf(IsValid(ItemShopButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		ItemShopButton->OnClicked.AddDynamic(this, &UPauseMenuUserWidget::OnItemShopButtonPressed);
 	}
@@ -41,7 +41,7 @@ void UPauseMenuUserWidget::OnBackButtonPressed()
 
 void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 {
-	ensure(IsValid(CreatorSupportWidgetClass));
+	ensureMsgf(IsValid(CreatorSupportWidgetClass), BP_ASSIGN_ENSURE_REASON);
 	UCreatorSupportUserWidget* CreatorSupportWidget = CreateWidget<UCreatorSupportUserWidget>(GetWorld(), CreatorSupportWidgetClass);
 	if (IsValid(CreatorSupportWidget))
 	{
@@ -56,7 +56,7 @@ void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 
 void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
 {
-	ensure(IsValid(ReferralsBountiesMenuWidgetClass));
+	ensureMsgf(IsValid(ReferralsBountiesMenuWidgetClass), BP_ASSIGN_ENSURE_REASON);
 	UReferralsBountiesMenuUserWidget* ReferralsBountiesMenuWidget = CreateWidget<UReferralsBountiesMenuUserWidget>(GetWorld(), ReferralsBountiesMenuWidgetClass);
 	if (IsValid(ReferralsBountiesMenuWidget))
 	{
@@ -71,7 +71,7 @@ void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
 
 void UPauseMenuUserWidget::OnItemShopButtonPressed()
 {
-	ensure(IsValid(ItemShopMenuWidgetClass));
+	ensureMsgf(IsValid(ItemShopMenuWidgetClass), BP_ASSIGN_ENSURE_REASON);
 	UItemShopMenuUserWidget* ItemShopMenuWidget = CreateWidget<UItemShopMenuUserWidget>(GetWorld(), ItemShopMenuWidgetClass);
 	if (IsValid(ItemShopMenuWidget))
 	{
@@ -89,7 +89,7 @@ void UPauseMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}

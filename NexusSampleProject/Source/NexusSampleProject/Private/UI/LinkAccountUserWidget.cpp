@@ -11,7 +11,7 @@ void ULinkAccountUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		BackButton->OnClicked.AddDynamic(this, &ULinkAccountUserWidget::OnBackButtonPressed);
 	}
@@ -25,7 +25,7 @@ void ULinkAccountUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensure(IsValid(BackButton)))
+	if (ensureMsgf(IsValid(BackButton), BP_ASSIGN_ENSURE_REASON))
 	{
 		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
 	}
@@ -57,7 +57,7 @@ void ULinkAccountUserWidget::OnGetPlayerReferralCodeComplete(FString& ReferralCo
 {
 	if (bWasSuccessful)
 	{
-		if (ensure(IsValid(PlayerReferralCode)))
+		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ASSIGN_ENSURE_REASON))
 		{
 			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
 		}
@@ -72,6 +72,11 @@ void ULinkAccountUserWidget::OnGetPlayerReferralCodeComplete(FString& ReferralCo
 	}
 	else 
 	{
-		UE_LOG(LogNexusSampleProject, Warning, TEXT("Get player referral code failed!"));
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Get player referral code failed!"));
+		}
+
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Get player referral code failed!"));
 	}
 }

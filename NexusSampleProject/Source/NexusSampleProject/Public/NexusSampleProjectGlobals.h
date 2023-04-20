@@ -5,10 +5,4 @@
 #include "CoreMinimal.h"
 
 #define SAVELOAD_SLOT_NAME TEXT("DefaultSlot")
-
-class NEXUSSAMPLEPROJECT_API NexusSampleProjectGlobals
-{
-public:
-	NexusSampleProjectGlobals();
-	~NexusSampleProjectGlobals();
-};
+#define BP_ASSIGN_ENSURE_REASON TEXT("Referenced widget class or widget component was invalid. Please ensure that the widget class or widget component in the corresponding child BP is assigned in editor!")
