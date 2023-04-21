@@ -32,10 +32,11 @@ void FNexusUESDKTestSpec::Define()
 
 	Describe("B_Unreal SDK Prototype Tests", [this]
 	{
-		It("A_(GetCatFacts) Should retrieve cat facts with valid data", [this]
+		It("A_'GetCatFacts' Should retrieve cat facts with valid data", [this]
 		{
 			bool bGetCatFactsDone = false;
 			bool bGetCatFactsSuccess = false;
+			TArray<FString> FactList;
 
 			NexusSDK::FGetCatFactsRequest GetCatFactsRequest;
 			GetCatFactsRequest.MaxLength = 32;
@@ -43,8 +44,9 @@ void FNexusUESDKTestSpec::Define()
 
 			// Bind lambda and assign flags appropriately
 			OnGetCatFactsComplete.BindLambda(
-				[this, &bGetCatFactsDone, &bGetCatFactsSuccess](const NexusSDK::FGetCatFactsResponse& Response)
+				[this, &bGetCatFactsDone, &bGetCatFactsSuccess, &FactList](const NexusSDK::FGetCatFactsResponse& Response)
 				{
+					FactList = Response.Facts;
 					bGetCatFactsSuccess = Response.bSuccess;
 					bGetCatFactsDone = true;
 				});
@@ -52,6 +54,7 @@ void FNexusUESDKTestSpec::Define()
 			// Request GetCatFacts 
 			NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetCatFactsComplete);
 
+			// Wait for done
 			while (!bGetCatFactsDone)
 			{
 				FPlatformProcess::Sleep(DeltaTime);
@@ -59,19 +62,22 @@ void FNexusUESDKTestSpec::Define()
 				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve cat facts..."));
 			}
 
-			TestEqual(TEXT("GetCatFacts should be true"), bGetCatFactsSuccess, true);
+			// Test success
+			TestTrue(TEXT("GetCatFacts should be true"), bGetCatFactsSuccess);
+
+			// Test content
+			for (FString& Fact : FactList) 
+			{
+				TestTrue(TEXT("Fact in FactList should not be empty"), !Fact.IsEmpty());
+			}
+
 			return true;
 		});
 	});
 
-	Describe("C_Test", [this]
+	Describe("C_<NewTestHere>", [this]
 	{
-		It("A_Should A", [this]
-		{
-			return true;
-		});
-
-		It("B_Should B", [this]
+		It("A_Should<DescriptionHere>", [this]
 		{
 			return true;
 		});
@@ -79,7 +85,7 @@ void FNexusUESDKTestSpec::Define()
 
 	Describe("Z_Teardown", [this]
 	{
-		It("A_Should A", [this]
+		It("A_Should<DescriptionHere>", [this]
 		{
 			return true;
 		});
