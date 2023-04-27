@@ -31,6 +31,30 @@ float DeltaTime = 0.2f;
 
 END_DEFINE_SPEC(FNexusUESDKTestSpec);
 
+void WaitForResponse(bool& Condition, float Timeout, FString InMessage)
+{
+	float TimeoutCounter = 0;
+	
+	while (!Condition) 
+	{
+		if (TimeoutCounter >= Timeout)
+		{
+			UE_LOG(LogNexusUESDKTest, Error, TEXT("Request timed out!"));
+			break;
+		}
+		
+		FPlatformProcess::Sleep(0.2f);
+		FHttpModule::Get().GetHttpManager().Tick(0.2f);
+
+		if (!InMessage.IsEmpty())
+		{
+			UE_LOG(LogNexusUESDKTest, Log, TEXT("%s"), *InMessage);
+		}
+
+		TimeoutCounter += 0.2f;
+	}
+}
+
 void FNexusUESDKTestSpec::Define()
 {
 	Describe("A_Setup", [this]
@@ -66,13 +90,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request GetCatFacts 
 			NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetCatFactsComplete);
 
-			// Wait for done
-			while (!bGetCatFactsDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve cat facts..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetCatFactsDone, 5.0f, TEXT("Waiting to retrieve cat facts..."));
 
 			// Test success
 			TestTrue(TEXT("GetCatFacts response should be successful"), bGetCatFactsSuccess);
@@ -114,13 +133,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request GetCreators
 			NexusSDK::GetCreators(GetCreatorsRequest, OnGetCreatorsComplete);
 
-			// Wait for done
-			while (!bGetCreatorsDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve all creators and their creator details..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetCreatorsDone, 5.0f, TEXT("Waiting to retrieve all creators and their creator details..."));
 
 			// Test success
 			TestTrue(TEXT("GetCreators should be successful"), bGetCreatorsSuccess);
@@ -166,13 +180,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request GetCreators
 			NexusSDK::GetCreators(GetCreatorsRequest, OnGetCreatorsComplete);
 
-			// Wait for done
-			while (!bGetCreatorsDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve creator information by slug or UUID..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetCreatorsDone, 5.0f, TEXT("Waiting to retrieve creator information by slug or UUID..."));
 
 			// Test success
 			TestTrue(TEXT("GetCreators should be successful"), bGetCreatorsSuccess);
@@ -213,13 +222,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request ping
 			NexusSDK::GetPing();
 
-			// Wait for done
-			while (!bGetPingDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve ping..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetPingDone, 5.0f, TEXT("Waiting to retrieve ping..."));
 
 			// Test content
 			TestTrue(TEXT("Ping should not be -1"), OutPingRate != -1);
@@ -252,13 +256,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request referral info by player id
 			NexusSDK::GetReferralInfo(GetReferralInfoRequest, OnGetReferralInfoComplete);
 
-			// Wait for done
-			while (!bGetReferralInfoDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve referral info by Player Id..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetReferralInfoDone, 5.0f, TEXT("Waiting to retrieve referral info by Player Id..."));
 
 			// Test success
 			TestTrue(TEXT("Get referral info should be successful"), bGetReferralInfoSuccess);
@@ -316,13 +315,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request referral info by creator code
 			NexusSDK::GetReferralInfoByCode(GetReferralInfoByCodeRequest, OnGetReferralInfoByCodeComplete);
 
-			// Wait for done
-			while (!bGetReferralInfoDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve referral info by creator code..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetReferralInfoDone, 5.0f, TEXT("Waiting to retrieve referral info by creator code..."));
 
 			// Test success
 			TestTrue(TEXT("Get referral info should be successful"), bGetReferralInfoSuccess);
@@ -380,13 +374,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request referral code by player id
 			NexusSDK::GetRefferalCode(GetReferralCodeRequest, OnGetReferralCodeComplete);
 
-			// Wait for done
-			while (!bGetReferralCodeDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve referral code by Player Id..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetReferralCodeDone, 5.0f, TEXT("Waiting to retrieve referral code by Player Id..."));
 
 			// Test success
 			TestTrue(TEXT("Get referral code should be successful"), bGetReferralCodeSuccess);
@@ -419,13 +408,8 @@ void FNexusUESDKTestSpec::Define()
 			// Get list of bounties
 			NexusSDK::GetBounties(NexusSDK::FGetBountiesRequest(), OnGetBountiesComplete);
 
-			// Wait for done
-			while (!bGetBountiesDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve the list of available bounties..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetBountiesDone, 5.0f, TEXT("Waiting to retrieve the list of available bounties..."));
 
 			// Test success
 			TestTrue(TEXT("Get bounties should be successful"), bGetBountiesSuccess);
@@ -548,13 +532,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request bounty information
 			NexusSDK::GetBountyInfo(GetBountyInfoRequest, OnGetBountiesComplete);
 
-			// Wait for done
-			while (!bGetBountyInfoDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve bounty info by bounty id..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetBountyInfoDone, 5.0f, TEXT("Waiting to retrieve bounty info by bounty id..."));
 
 			// Test success
 			TestTrue(TEXT("Get bounty info should be successful"), bGetBountyInfoSuccess);
@@ -737,13 +716,8 @@ void FNexusUESDKTestSpec::Define()
 			// Request bounty progress
 			NexusSDK::GetBountyProgress(GetBountyProgressRequest, OnGetBountyProgressComplete);
 
-			// Wait for done
-			while (!bGetBountyProgressDone)
-			{
-				FPlatformProcess::Sleep(DeltaTime);
-				FHttpModule::Get().GetHttpManager().Tick(DeltaTime);
-				UE_LOG(LogNexusUESDKTest, Log, TEXT("Waiting to retrieve bounty progress by creator id..."));
-			}
+			// Wait for response
+			WaitForResponse(bGetBountyProgressDone, 5.0f, TEXT("Waiting to retrieve bounty progress by creator id..."));
 
 			// Test success
 			TestTrue(TEXT("Get bounty progress should be successful"), bGetBountyProgressSuccess);
