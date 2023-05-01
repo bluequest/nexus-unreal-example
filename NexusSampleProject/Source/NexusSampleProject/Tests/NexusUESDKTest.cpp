@@ -2,8 +2,8 @@
 
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/Public/NexusSampleProjectGlobals.h"
-#include "NexusPrototype.h"
-#include "NexusUnrealSDK.h"
+//#include "NexusPrototype.h"
+//#include "NexusUnrealSDK.h"
 #include "HttpModule.h"
 #include "HttpManager.h"
 
@@ -13,16 +13,18 @@ DEFINE_LOG_CATEGORY(LogNexusUESDKTest);
 BEGIN_DEFINE_SPEC(FNexusUESDKTestSpec, "Nexus.AutomationTests", EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
 
 // Add variables here 
-NexusSDK::FOnGetCatFactsComplete OnGetCatFactsComplete;
-NexusSDK::FOnGetCreatorsComplete OnGetCreatorsComplete;
+//NexusSDK::FOnGetCatFactsComplete OnGetCatFactsComplete;
+//NexusSDK::FOnGetCreatorsComplete OnGetCreatorsComplete;
 
 FString PublicApiKey = TEXT("nexus_pk_7784c3faa6e94c1fad8aceab27ab31e6"); // #TODO: REMOVE ME
 
 // PLACEHOLDER VARIABLES // PLACEHOLDER VARIABLES // PLACEHOLDER VARIABLES //
 //NexusSDK::FOnGetCreatorsComplete OnGetCreatorsComplete;
-//NexusSDK::FOnGetReferralInfoComplete OnGetReferralInfoComplete;
-//NexusSDK::FOnGetReferralCodeComplete OnGetReferralCodeComplete;
-//NexusSDK::FOnGetReferralInfoByCodeComplete OnGetReferralInfoByCodeComplete;
+//NexusSDK::FGetCreatorByUuidComplete OnGetCreatorsByUuidComplete;
+//NexusSDK::FGetPingComplete OnGetPingComplete;
+//NexusSDK::FGetReferralInfoByPlayerIdComplete OnGetReferralInfoComplete;
+//NexusSDK::FGetReferralInfoByCodeComplete OnGetReferralCodeComplete;
+//NexusSDK::FGetPlayerCurrentReferralComplete OnGetReferralInfoByCodeComplete;
 //NexusSDK::FOnGetBountyProgressComplete OnGetBountyProgressComplete;
 // PLACEHOLDER VARIABLES // PLACEHOLDER VARIABLES // PLACEHOLDER VARIABLES //
 
@@ -66,6 +68,7 @@ void FNexusUESDKTestSpec::Define()
 		});
 	});
 
+	/*
 	Describe("B_Unreal SDK Prototype Tests", [this]
 	{
 		It("A_'GetCatFacts' Should retrieve cat facts with valid data", [this]
@@ -105,6 +108,7 @@ void FNexusUESDKTestSpec::Define()
 			return true;
 		});
 	});
+	*/
 
 	Describe("C_Nexus Attribution API", [this]
 	{
@@ -163,22 +167,22 @@ void FNexusUESDKTestSpec::Define()
 			bool bGetCreatorsDone = false;
 			bool bGetCreatorsSuccess = false;
 			
-			OnGetCreatorsComplete.BindLambda(
+			OnGetCreatorsByUuidComplete.BindLambda(
 				[this, &bGetCreatorsDone, &bGetCreatorsSuccess](const NexusSDK::FGetCreatorsResponse& Response)
 				{
 					bGetCreatorsSuccess = Response.bSuccess;
 					bGetCreatorsDone = true;
 				});
 			
-			NexusSDK::FGetCreatorsBySlugUUIDRequest GetCreatorsRequest;
-			FGetCreatorsBySlugUUIDRequest.Slug = TEXT("");
-			FGetCreatorsBySlugUUIDRequest.Id = TEXT("");
-			FGetCreatorsBySlugUUIDRequest.Page = 1;
-			FGetCreatorsBySlugUUIDRequest.PageSize = 1;
-			FGetCreatorsBySlugUUIDRequest.PublicKey = PublicApiKey;
+			NexusSDK::GetCreatorByUuid GetCreatorsRequest;
+			GetCreatorsRequest.Slug = TEXT("");
+			GetCreatorsRequest.Id = TEXT("");
+			GetCreatorsRequest.Page = 1;
+			GetCreatorsRequest.PageSize = 1;
+			GetCreatorsRequest.PublicKey = PublicApiKey;
 
 			// Request GetCreators
-			NexusSDK::GetCreators(GetCreatorsRequest, OnGetCreatorsComplete);
+			NexusSDK::GetCreatorByUuid(GetCreatorsRequest, OnGetCreatorsByUuidComplete);
 
 			// Wait for response
 			WaitForResponse(bGetCreatorsDone, 5.0f, TEXT("Waiting to retrieve creator information by slug or UUID..."));
@@ -211,7 +215,7 @@ void FNexusUESDKTestSpec::Define()
 			bool bGetPingSuccess = false;
 			int32 OutPingRate = -1;
 
-			OnGetCatFactsComplete.BindLambda(
+			OnGetPingComplete.BindLambda(
 				[this, &bGetPingDone, &bGetPingSuccess, &OutPingRate](const int32& PingRate, bool bWasSuccessful)
 				{
 					OutPingRate = PingRate;
@@ -242,7 +246,7 @@ void FNexusUESDKTestSpec::Define()
 			bool bGetReferralInfoSuccess = false;
 			NexusSDK::FGetReferralInfoResponse OutData;
 
-			NexusSDK::FGetReferralInfoRequest GetReferralInfoRequest;
+			NexusSDK::FGetReferralInfoByPlayerIdRequest GetReferralInfoRequest;
 			GetReferralInfoRequest.PlayerId = TEXT("ABCD1234");
 
 			OnGetReferralInfoComplete.BindLambda(
@@ -254,7 +258,7 @@ void FNexusUESDKTestSpec::Define()
 				});
 			
 			// Request referral info by player id
-			NexusSDK::GetReferralInfo(GetReferralInfoRequest, OnGetReferralInfoComplete);
+			NexusSDK::GetReferralInfoByPlayerId(GetReferralInfoRequest, OnGetReferralInfoComplete);
 
 			// Wait for response
 			WaitForResponse(bGetReferralInfoDone, 5.0f, TEXT("Waiting to retrieve referral info by Player Id..."));
@@ -360,7 +364,7 @@ void FNexusUESDKTestSpec::Define()
 			bool bGetReferralCodeSuccess = false;
 			FString OutReferralCode;
 
-			NexusSDK::FGetReferralCodeRequest GetReferralCodeRequest;
+			NexusSDK::FGetPlayerCurrentReferralRequest GetReferralCodeRequest;
 			GetReferralCodeRequest.PlayerId = TEXT("ABCD1234");
 
 			OnGetReferralInfoComplete.BindLambda(
@@ -372,7 +376,7 @@ void FNexusUESDKTestSpec::Define()
 				});
 			
 			// Request referral code by player id
-			NexusSDK::GetRefferalCode(GetReferralCodeRequest, OnGetReferralCodeComplete);
+			NexusSDK::GetPlayerCurrentReferral(GetReferralCodeRequest, OnGetReferralCodeComplete);
 
 			// Wait for response
 			WaitForResponse(bGetReferralCodeDone, 5.0f, TEXT("Waiting to retrieve referral code by Player Id..."));
