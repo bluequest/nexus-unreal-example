@@ -33,32 +33,12 @@ public:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TSoftObjectPtr<UInputAction> PauseAction;
 
-	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
-	TSubclassOf<UPauseMenuUserWidget> PauseMenuWidgetClass;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	UPauseMenuUserWidget* PauseMenuWidget;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	UReferralsBountiesMenuUserWidget* ReferralsBountiesMenuWidget;
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	UCreatorSupportUserWidget* CreatorSupportWidget;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	ULinkAccountUserWidget* LinkAccountWidget;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	UBountiesUserWidget* BountiesWidget;
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Menus")
-	UItemShopMenuUserWidget* ItemShopMenuWidget;
-
 protected:
 	// ~APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// ~End APawn interface
 
+	UFUNCTION(Category = "Menus")
 	void Pause(const FInputActionInstance& Instance);
 
 private:
