@@ -3,6 +3,8 @@
 
 #include "UI/HUDUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "NexusSampleProjectHUD.h"
 #include "Components/Button.h"
 
 void UHUDUserWidget::NativeConstruct()
@@ -20,9 +22,10 @@ void UHUDUserWidget::OnPauseButtonPressed()
 	if (IsValid(PauseMenuWidgetRef))
 	{
 		PauseMenuWidgetRef->AddToViewport();
-		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		
+		if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			CharacterRef->PauseMenuWidget = PauseMenuWidgetRef;
+			HUD->PauseMenuWidget = PauseMenuWidgetRef;
 		}
 	}
 }

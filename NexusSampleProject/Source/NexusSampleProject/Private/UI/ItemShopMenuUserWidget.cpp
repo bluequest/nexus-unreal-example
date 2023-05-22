@@ -5,6 +5,7 @@
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
+#include "NexusSampleProjectHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -46,10 +47,10 @@ void UItemShopMenuUserWidget::NativeConstruct()
 
 void UItemShopMenuUserWidget::OnBackButtonPressed()
 {
-	if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+	if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 	{
 		RemoveFromParent();
-		CharacterRef->ItemShopMenuWidget = nullptr;
+		HUD->ItemShopMenuWidget = nullptr;
 	}
 }
 
