@@ -3,6 +3,8 @@
 
 #include "UI/BountiesUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "NexusSampleProjectHUD.h"
 #include "Components/Button.h"
 
 void UBountiesUserWidget::SetupInitialFocus(APlayerController* Controller)
@@ -30,9 +32,9 @@ void UBountiesUserWidget::NativeConstruct()
 
 void UBountiesUserWidget::OnBackButtonPressed()
 {
-	if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+	if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 	{
 		RemoveFromParent();
-		CharacterRef->BountiesWidget = nullptr;
+		HUD->BountiesWidget = nullptr;
 	}
 }

@@ -2,6 +2,8 @@
 
 
 #include "UI/PauseMenuUserWidget.h"
+#include "NexusSampleProjectHUD.h"
+#include "Kismet/GameplayStatics.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "Components/Button.h"
 
@@ -32,10 +34,10 @@ void UPauseMenuUserWidget::NativeConstruct()
 
 void UPauseMenuUserWidget::OnBackButtonPressed()
 {
-	if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+	if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 	{
 		RemoveFromParent();
-		CharacterRef->PauseMenuWidget = nullptr;
+		HUD->PauseMenuWidget = nullptr;
 	}
 }
 
@@ -47,9 +49,9 @@ void UPauseMenuUserWidget::OnCreatorSupportButtonPressed()
 	{
 		CreatorSupportWidget->AddToViewport();
 
-		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			CharacterRef->CreatorSupportWidget = CreatorSupportWidget;
+			HUD->CreatorSupportWidget = CreatorSupportWidget;
 		}
 	}
 }
@@ -62,9 +64,9 @@ void UPauseMenuUserWidget::OnReferralsBountiesButtonPressed()
 	{
 		ReferralsBountiesMenuWidget->AddToViewport();
 
-		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			CharacterRef->ReferralsBountiesMenuWidget = ReferralsBountiesMenuWidget;
+			HUD->ReferralsBountiesMenuWidget = ReferralsBountiesMenuWidget;
 		}
 	}
 }
@@ -77,9 +79,9 @@ void UPauseMenuUserWidget::OnItemShopButtonPressed()
 	{
 		ItemShopMenuWidget->AddToViewport();
 
-		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			CharacterRef->ItemShopMenuWidget = ItemShopMenuWidget;
+			HUD->ItemShopMenuWidget = ItemShopMenuWidget;
 		}
 	}
 }

@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "NexusSampleProjectCharacter.h"
+#include "NexusSampleProjectHUD.h"
+#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -76,49 +78,9 @@ void ANexusSampleProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 
 void ANexusSampleProjectCharacter::Pause(const FInputActionInstance& Instance)
 {
-	if (IsValid(PauseMenuWidget))
+	if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 	{
-		PauseMenuWidget->RemoveFromParent();
-		PauseMenuWidget = nullptr;
-
-		if (IsValid(CreatorSupportWidget))
-		{
-			CreatorSupportWidget->RemoveFromParent();
-			CreatorSupportWidget = nullptr;
-		}
-
-		if (IsValid(LinkAccountWidget))
-		{
-			LinkAccountWidget->RemoveFromParent();
-			LinkAccountWidget = nullptr;
-		}
-
-		if (IsValid(BountiesWidget))
-		{	
-			BountiesWidget->RemoveFromParent();
-			BountiesWidget = nullptr;
-		}
-
-		if (IsValid(ReferralsBountiesMenuWidget))
-		{
-			ReferralsBountiesMenuWidget->RemoveFromParent();
-			ReferralsBountiesMenuWidget = nullptr;
-		}
-
-		if (IsValid(ItemShopMenuWidget)) 
-		{
-			ItemShopMenuWidget->RemoveFromParent();
-			ItemShopMenuWidget = nullptr;
-		}
-	}
-	else
-	{
-		ensure (IsValid(PauseMenuWidgetClass));
-		PauseMenuWidget = CreateWidget<UPauseMenuUserWidget>(GetWorld(), PauseMenuWidgetClass);
-		if (IsValid(PauseMenuWidget))
-		{
-			PauseMenuWidget->AddToViewport();
-		}
+		HUD->TogglePause();
 	}
 }
 

@@ -5,6 +5,8 @@
 #include "UI/BountiesUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
 #include "NexusSampleProject/NexusSampleProject.h"
+#include "NexusSampleProjectHUD.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Runtime/ApplicationCore/Public/HAL/PlatformApplicationMisc.h"
@@ -75,10 +77,10 @@ void UReferralsBountiesMenuUserWidget::NativeConstruct()
 
 void UReferralsBountiesMenuUserWidget::OnBackButtonPressed()
 {
-	if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+	if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 	{
 		RemoveFromParent();
-		CharacterRef->ReferralsBountiesMenuWidget = nullptr;
+		HUD->ReferralsBountiesMenuWidget = nullptr;
 	}
 }
 
@@ -125,9 +127,9 @@ void UReferralsBountiesMenuUserWidget::OnLinkAccountButtonPressed()
 	{
 		LinkAccountWidgetRef->AddToViewport();
 
-		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			CharacterRef->LinkAccountWidget = LinkAccountWidgetRef;
+			HUD->LinkAccountWidget = LinkAccountWidgetRef;
 		}
 	}
 }
@@ -140,9 +142,9 @@ void UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed()
 	{
 		BountiesWidgetRef->AddToViewport();
 
-		if (ANexusSampleProjectCharacter* CharacterRef = Cast<ANexusSampleProjectCharacter>(GetOwningPlayerPawn()))
+		if (ANexusSampleProjectHUD* HUD = Cast<ANexusSampleProjectHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			CharacterRef->BountiesWidget = BountiesWidgetRef;
+			HUD->BountiesWidget = BountiesWidgetRef;
 		}
 	}
 }
