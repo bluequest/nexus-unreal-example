@@ -87,5 +87,5 @@ private:
 	void OnGetReferralInfoByPlayerId400ResponseComplete(const FNexusReferralReferralError& Response);
 
 	/** Callback for when GetCreatorCodeCompletes fails */
-	void OnGetCreatorCodeError(int32 ErrorCode);
+	void OnGetReferralInfoByPlayerIdError(int32 ErrorCode);
 };

@@ -192,7 +192,7 @@ void UCreatorSupportUserWidget::OnGetCreatorsComplete(const FNexusAttributionGet
 		FNexusReferralAPI::GetReferralInfoByPlayerId(
 			RequestParams, 
 			OnGetReferralInfoByPlayerIdResponse,
-			FNexusOnHttpErrorDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnGetCreatorCodeError)
+			FNexusOnHttpErrorDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnGetReferralInfoByPlayerIdError)
 			);
 	}
 }
@@ -230,7 +230,7 @@ void UCreatorSupportUserWidget::OnGetReferralInfoByPlayerId400ResponseComplete(c
 	UE_LOG(LogNexusSampleProject, Error, TEXT("OnGetReferralInfoByPlayerId returned a 400 error with message: %s"), *Response.code);
 }
 
-void UCreatorSupportUserWidget::OnGetCreatorCodeError(int32 ErrorCode)
+void UCreatorSupportUserWidget::OnGetReferralInfoByPlayerIdError(int32 ErrorCode)
 {
 	// #TODO display widget on screen message that get creator code failed, debug screen message will suffice for now
 	if (GEngine)
