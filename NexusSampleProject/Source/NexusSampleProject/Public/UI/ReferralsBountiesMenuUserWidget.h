@@ -15,6 +15,7 @@ class UButton;
 class UEditableTextBox;
 class UProgressBar;
 class UBountiesUserWidget;
+class UNexusSampleProjectSaveGame;
 
 /**
  * Widget used to utilize Nexus Referrals & Bounties functionality
@@ -33,8 +34,20 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UBountiesUserWidget> BountiesWidgetClass;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Save Game")
+	UNexusSampleProjectSaveGame* SaveGameInstance;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Referrals & Bounties Menu")
+	TArray<FString> ReferralCodeList;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Referrals & Bounties Menu")
+	FString LocalPlayerReferralCode;
+
 	UFUNCTION(BlueprintCallable, Category = "Nexus API")
 	void UpdatePlayerReferralCode();
+
+	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	void UpdateSavedReferralCode();
 
 protected:
 
@@ -100,6 +113,9 @@ private:
 	/** Callback for when GetCreatorsCompletes fails */
 	void OnGetCreatorsError(int32 ErrorCode);
 
+	/** Callback for when OnGetReferralInfoByPlayerId completes for the 1st player in the GetCreators call, and returns a 200 response */
+	void OnGetReferralInfoByPlayerIdFirstCreator200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response);
+
 	/** Callback for when OnGetReferralInfoByPlayerId completes, and returns a 200 response */
 	void OnGetReferralInfoByPlayerId200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response);
 
@@ -108,4 +124,10 @@ private:
 
 	/** Callback for when GetCreatorCodeCompletes fails */
 	void OnGetReferralInfoByPlayerIdError(int32 ErrorCode);
+
+	/** Callback for when saving the save game to slot completes */
+	void OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful);
+
+	/** Callback for when loading the save game to slot completes */
+	void OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame);
 };
