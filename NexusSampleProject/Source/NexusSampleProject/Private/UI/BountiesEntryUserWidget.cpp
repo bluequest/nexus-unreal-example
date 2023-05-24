@@ -9,6 +9,12 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 
+void UBountiesEntryUserWidget::SetBountyProgressBar(float InPercent)
+{
+	ensureMsgf(IsValid(BountyProgressBar), BP_ENSURE_REASON_INVALID_CLASS_WIDGET);
+	BountyProgressBar->SetPercent(InPercent);
+}
+
 void UBountiesEntryUserWidget::SetBountyDescription(FString InDescription)
 {
 	if (InDescription.IsEmpty())

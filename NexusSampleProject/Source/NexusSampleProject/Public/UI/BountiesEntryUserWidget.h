@@ -23,6 +23,9 @@ class NEXUSSAMPLEPROJECT_API UBountiesEntryUserWidget : public UNexusSampleProje
 public: 
 	
 	UFUNCTION(BlueprintCallable)
+	void SetBountyProgressBar(float InPercent);
+
+	UFUNCTION(BlueprintCallable)
 	void SetBountyDescription(FString InDescription);
 
 	UFUNCTION(BlueprintCallable)
