@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 #include "Runtime/ApplicationCore/Public/HAL/PlatformApplicationMisc.h"
 #include "Components/EditableTextBox.h"
 
@@ -58,6 +59,9 @@ void UReferralsBountiesMenuUserWidget::UpdateSavedReferralCode()
 void UReferralsBountiesMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	// For testing referral progress, set referral progress goal to 5
+	ReferralProgressGoal = 5;
 
 	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
@@ -267,6 +271,11 @@ void UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerIdFirstCreator20
 		{
 			LocalPlayerReferralCode = Response.referralCodes[0].code;
 			PlayerReferralCode->SetText(FText::FromString(Response.referralCodes[0].code).ToUpper());
+		}
+
+		if (Response.referrals.Num() > -1) 
+		{
+			ReferralProgressBar->SetPercent(Response.referrals.Num()/ReferralProgressGoal);
 		}
 	}
 }

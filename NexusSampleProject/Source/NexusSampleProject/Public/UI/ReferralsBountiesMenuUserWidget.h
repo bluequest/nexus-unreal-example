@@ -43,6 +43,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Referrals & Bounties Menu")
 	FString LocalPlayerReferralCode;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Referrals & Bounties Menu")
+	float ReferralProgressGoal;
+
 	UFUNCTION(BlueprintCallable, Category = "Nexus API")
 	void UpdatePlayerReferralCode();
 
