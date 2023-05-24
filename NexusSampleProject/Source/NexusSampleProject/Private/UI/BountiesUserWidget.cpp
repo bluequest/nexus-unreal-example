@@ -75,7 +75,7 @@ void UBountiesUserWidget::OnGetBounties200ResponseComplete(const FNexusBountyGet
 				// Only one objective with "OR" is required. If objective 1, 2, and 3 are all "AND" condition and objective 4 and 5 are "OR" condition, 
 				// the bounty will be considered complete when 1, 2, 3, and either 4 or 5 are completed.
 				//
-				// In a real project, there should be conditions on the game client or game server that check if this objective has been completed or not
+				// In a real project, there should be conditions on the game client or game server that check if this objective has been completed or not.
 				// Just for this example project we will treat each objective as non-completed
 			}
 

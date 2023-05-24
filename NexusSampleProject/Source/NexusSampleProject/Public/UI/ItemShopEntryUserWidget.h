@@ -33,17 +33,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UButton* PurchaseItemButton;
 
-	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when submitting referral or creator code completes */
-	//NexusSDK::FOnSubmitReferralCodeComplete OnSubmitReferralCodeCompleteDelegate;
-
 private:
 
 	/** Callback for when the purchase item button is pressed */
 	UFUNCTION(BlueprintCallable, Category = "Item Shop Menu Buttons")
 	void OnPurchaseItemButtonPressed();
-
-private:	
-
-	/** #TODO NexusAPI - Callback for when creating a new sale attributed to a creator completes */
-	void OnCreateNewSaleTransactionComplete(/* FTransactionStruct TransactionInfo, */ bool bWasSuccessful);
 };

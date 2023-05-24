@@ -85,8 +85,6 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 		bool bCreatorCodeFound = false;
 		for (FString QueriedCreatorCode : CreatorCodeList) 
 		{
-			FString Compare1 = QueriedCreatorCode.ToUpper();
-			FString Compare2 = CreatorCodeInputTextBox->GetText().ToString().ToUpper();
 			if (QueriedCreatorCode.ToUpper() == CreatorCodeInputTextBox->GetText().ToString().ToUpper()) 
 			{
 				bCreatorCodeFound = true;
@@ -105,7 +103,7 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 			return;
 		}
 
-		// #TODO If found, save the code on disk, so that during purchasing (transactions page) we can reference this code and call the create new sale attributed to a creator endpoint (https://api.nexus.gg/v1/attributions/transactions)
+		// If the code was found, save the code on disk, so that shop/store integration can reference this code to attribute to creators
 		SaveGameInstance = Cast<UNexusSampleProjectSaveGame>(UGameplayStatics::CreateSaveGameObject(UNexusSampleProjectSaveGame::StaticClass()));
 		if (SaveGameInstance) 
 		{

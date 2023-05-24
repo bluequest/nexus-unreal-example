@@ -29,7 +29,7 @@ void UReferralsBountiesMenuUserWidget::SetupInitialFocus(APlayerController* Cont
 
 void UReferralsBountiesMenuUserWidget::UpdatePlayerReferralCode()
 {
-	// #NOTE For an example, we will use the 1st creator found in the GetCreators call, and assign that data to the player to mimic login.
+	// #NOTE Just for this example project, we will use the 1st creator found in the GetCreators call, and assign that data to the player to mimic login.
 	// 
 	// In a real project, after a login system has been implemented, a player should have their username/playerId at this point,
 	// which then should be used when querying the player's referral/creator code.
@@ -124,7 +124,8 @@ void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 			return;
 		}
 		
-		// Similar to UCreatorSupportUserWidget, check if the player's input matches any referral codes found on the backend, and if so save the code on disk
+		// Similar to UCreatorSupportUserWidget, check if the player's input matches any referral codes found on the backend, 
+		// and if so save the code on disk so that shop/store integration can reference this code to attribute to creators
 		bool bReferralCodeFound = false;
 		for (FString QueriedReferralCode : ReferralCodeList)
 		{

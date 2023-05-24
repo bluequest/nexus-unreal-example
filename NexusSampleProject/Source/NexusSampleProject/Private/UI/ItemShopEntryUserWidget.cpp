@@ -18,32 +18,17 @@ void UItemShopEntryUserWidget::NativeConstruct()
 
 void UItemShopEntryUserWidget::OnPurchaseItemButtonPressed()
 {
-	// #TODO Replace logic when Unreal SDK template is in.
-	//OnCreateNewSaleTransactionCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnCreateNewSaleTransactionComplete);
-	//NexusSDK::CreateNewSaleTransaction(FString GroupId, OnCreateNewSaleTransactionCompleteDelegate);
-	OnCreateNewSaleTransactionComplete(true);
-}
-
-void UItemShopEntryUserWidget::OnCreateNewSaleTransactionComplete(/* FTransactionStruct TransactionInfo, */ bool bWasSuccessful)
-{
-	if (bWasSuccessful) 
+	// #NOTE: Just for this example project, we will just clear the item entry and display message that the item has been purchased.
+	//
+	// In a real project, shop/store integration should handle attributing the creator using the stored 
+	// creator/referral code that was cached through UReferralsBountiesMenuUserWidget/UCreatorSupportUserWidget
+	
+	if (GEngine)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Item Purchased, and attributed to creator!")));
-		}
-
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Item Purchased, and attributed to creator!"));
-
-		RemoveFromParent();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Item Purchased, and attributed to creator!")));
 	}
-	else 
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to purchase item, and attribute to creator!")));
-		}
 
-		UE_LOG(LogNexusSampleProject, Error, TEXT("Failed to purchase item, and attribute to creator!"));
-	}
+	UE_LOG(LogNexusSampleProject, Log, TEXT("Item Purchased, and attributed to creator!"));
+
+	RemoveFromParent();
 }
