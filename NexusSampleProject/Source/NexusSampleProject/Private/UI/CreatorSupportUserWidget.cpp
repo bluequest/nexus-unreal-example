@@ -49,6 +49,18 @@ void UCreatorSupportUserWidget::NativeConstruct()
 		GetOwningLocalPlayer()->GetLocalPlayerIndex(), 
 		FAsyncLoadGameFromSlotDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete)
 		);
+
+	// Query Nexus creators to be used to check if any creator code matches player's input in UCreatorSupportUserWidget::OnSubmitButtonPressed
+	FNexusAttributionGetCreatorsRequestParams RequestParams;
+	RequestParams.groupId = TEXT("");
+	RequestParams.page = 1;
+	RequestParams.pageSize = 100;
+
+	FNexusAttributionAPI::GetCreators(
+		RequestParams,
+		FNexusAttributionAPI::FOnGetCreators200ResponseCallback::CreateUObject(this, &UCreatorSupportUserWidget::OnGetCreatorsComplete),
+		FNexusOnHttpErrorDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnGetCreatorsError)	
+		);
 }
 
 void UCreatorSupportUserWidget::OnBackButtonPressed()
@@ -69,17 +81,29 @@ void UCreatorSupportUserWidget::OnSubmitButtonPressed()
 			return;
 		}
 
-		// #TODO ~Remove me! Just used for testing cat facts API
-		OnGetGatFactsCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnGetCatFactsComplete);
-		NexusSDK::FGetCatFactsRequest GetCatFactsRequest;
-		GetCatFactsRequest.MaxLength = 32;
-		GetCatFactsRequest.Limit = 32;
-		NexusSDK::GetCatFacts(GetCatFactsRequest, OnGetGatFactsCompleteDelegate);
-		// #TODO ~End remove me
+		// Check if the player's input matches any creator codes found on the backend
+		bool bCreatorCodeFound = false;
+		for (FString QueriedCreatorCode : CreatorCodeList) 
+		{
+			if (QueriedCreatorCode.ToUpper() == CreatorCodeInputTextBox->GetText().ToString().ToUpper()) 
+			{
+				bCreatorCodeFound = true;
+			}
+		}		
+		
+		if (!bCreatorCodeFound) 
+		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Creator code: %s was not found on the backend. Try again with a different code."), *CreatorCodeInputTextBox->GetText().ToString().ToUpper()));
+				
+			}
 
-		// #TODO Query Nexus creators using (https://api.nexus.gg/v1/attributions/creators) and check if any creator code matches player's input
+			UE_LOG(LogNexusSampleProject, Warning, TEXT("Creator code: %s was not found"), *CreatorCodeInputTextBox->GetText().ToString().ToUpper());
+			return;
+		}
 
-		// Save the code on disk, so that during purchasing (transactions page) we can reference this code and call the create new sale attributed to a creator endpoint (https://api.nexus.gg/v1/attributions/transactions)
+		// If the code was found, save the code on disk, so that shop/store integration can reference this code to attribute to creators
 		SaveGameInstance = Cast<UNexusSampleProjectSaveGame>(UGameplayStatics::CreateSaveGameObject(UNexusSampleProjectSaveGame::StaticClass()));
 		if (SaveGameInstance) 
 		{
@@ -107,43 +131,16 @@ void UCreatorSupportUserWidget::OnTextChanged(const FText& Text)
 	}
 }
 
-// #TODO Remove me! Just used for testing cat facts API
-void UCreatorSupportUserWidget::OnGetCatFactsComplete(const NexusSDK::FGetCatFactsResponse& Response)
-{
-	if (Response.bSuccess)
-	{
-		// Logging
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Get cat facts successful!")));
-		}
-
-		FString FactListString = TEXT("");
-		for (FString Fact : Response.Facts)
-		{
-			FactListString.Append(*Fact);
-			FactListString.Append("\n");
-		}
-
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Get cat facts successful! Fact List: \n%s"), *FactListString);
-	}
-	else 
-	{
-		UE_LOG(LogNexusSampleProject, Error, TEXT("Get cat facts failed!"));
-	}
-}
-// #TODO ~End remove me
-
 void UCreatorSupportUserWidget::OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful)
 {
 	if (bWasSuccessful) 
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator Code saved to settings!")));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Valid Creator Code was entered! Code was saved to settings.")));
 		}
 
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code saved to disk"));
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Valid Creator Code was entered! Code was saved to settings."));
 	}
 	else 
 	{
@@ -172,4 +169,72 @@ void UCreatorSupportUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& S
 			UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
 		}
 	}
+}
+
+void UCreatorSupportUserWidget::OnGetCreatorsComplete(const FNexusAttributionGetCreators200Response& Response)
+{
+	UE_LOG(LogNexusSampleProject, Log, TEXT("GetCreators returned a successful response"));
+
+	// For each creator, get their current referral/creator code and store it for player validation input check in UCreatorSupportUserWidget::OnSubmitButtonPressed
+	for (FNexusAttributionCreator Creator : Response.creators) 
+	{
+		FNexusReferralGetReferralInfoByPlayerIdRequestParams RequestParams;
+		RequestParams.playerId = Creator.id;
+		RequestParams.page = 1;
+		RequestParams.pageSize = 100;
+
+		FNexusReferralAPI::FOnGetReferralInfoByPlayerIdResponse OnGetReferralInfoByPlayerIdResponse;
+		OnGetReferralInfoByPlayerIdResponse.On200Response.BindUObject(this, &UCreatorSupportUserWidget::OnGetReferralInfoByPlayerId200ResponseComplete);
+		OnGetReferralInfoByPlayerIdResponse.On400Response.BindUObject(this, &UCreatorSupportUserWidget::OnGetReferralInfoByPlayerId400ResponseComplete);
+
+		FNexusReferralAPI::GetReferralInfoByPlayerId(
+			RequestParams, 
+			OnGetReferralInfoByPlayerIdResponse,
+			FNexusOnHttpErrorDelegate::CreateUObject(this, &UCreatorSupportUserWidget::OnGetReferralInfoByPlayerIdError)
+			);
+	}
+}
+
+void UCreatorSupportUserWidget::OnGetCreatorsError(int32 ErrorCode)
+{
+	// #TODO display widget on screen message that get creators failed, debug screen message will suffice for now
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to GetCreators. ErrorCode: %d"), ErrorCode));
+	}
+
+	UE_LOG(LogNexusSampleProject, Error, TEXT("Failed to GetCreators. ErrorCode: %d"), ErrorCode);
+}
+
+void UCreatorSupportUserWidget::OnGetReferralInfoByPlayerId200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response)
+{
+	UE_LOG(LogNexusSampleProject, Log, TEXT("GetReferralInfoByPlayerId returned a successful response"));
+	
+	// Store code on a successful response
+	for (FNexusReferralReferralCodeResponse ReferralCode : Response.referralCodes) 
+	{
+		CreatorCodeList.AddUnique(ReferralCode.code);
+	}
+}
+
+void UCreatorSupportUserWidget::OnGetReferralInfoByPlayerId400ResponseComplete(const FNexusReferralReferralError& Response)
+{
+	// #TODO display widget on screen message that get creator code returned 400, debug screen message will suffice for now
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OnGetReferralInfoByPlayerId returned a 400 error with message: %s"), *Response.code));
+	}
+
+	UE_LOG(LogNexusSampleProject, Error, TEXT("OnGetReferralInfoByPlayerId returned a 400 error with message: %s"), *Response.code);
+}
+
+void UCreatorSupportUserWidget::OnGetReferralInfoByPlayerIdError(int32 ErrorCode)
+{
+	// #TODO display widget on screen message that get creator code failed, debug screen message will suffice for now
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to GetCreatorCode. ErrorCode: %d"), ErrorCode));
+	}
+
+	UE_LOG(LogNexusSampleProject, Error, TEXT("Failed to GetCreatorCode. ErrorCode: %d"), ErrorCode);
 }

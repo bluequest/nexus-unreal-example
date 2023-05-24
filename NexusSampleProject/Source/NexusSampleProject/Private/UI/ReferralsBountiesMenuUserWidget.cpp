@@ -4,11 +4,13 @@
 #include "UI/ReferralsBountiesMenuUserWidget.h"
 #include "UI/BountiesUserWidget.h"
 #include "NexusSampleProject/NexusSampleProjectCharacter.h"
+#include "NexusSampleProject/Public/NexusSampleProjectSaveGame.h"
 #include "NexusSampleProject/NexusSampleProject.h"
 #include "NexusSampleProjectHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
 #include "Runtime/ApplicationCore/Public/HAL/PlatformApplicationMisc.h"
 #include "Components/EditableTextBox.h"
 
@@ -27,18 +29,39 @@ void UReferralsBountiesMenuUserWidget::SetupInitialFocus(APlayerController* Cont
 
 void UReferralsBountiesMenuUserWidget::UpdatePlayerReferralCode()
 {
-	// #TODO Replace logic when Unreal SDK template is in.
-	//OnGetReferralCodeCompleteDelegate.BindUObject(this, &UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete);
-	//NexusSDK::GetPlayerReferralCode(32, 32, OnGetReferralCodeCompleteDelegate);
+	// #NOTE Just for this example project, we will use the 1st creator found in the GetCreators call, and assign that data to the player to mimic login.
+	// 
+	// In a real project, after a login system has been implemented, a player should have their username/playerId at this point,
+	// which then should be used when querying the player's referral/creator code.
 
-	// #TODO Replace logic below when NexusSDK::GetPlayerReferralCode is in
-	FString TestString = TEXT("Testing!");
-	OnGetPlayerReferralCodeComplete(TestString, true);
+	FNexusAttributionGetCreatorsRequestParams RequestParams;
+	RequestParams.groupId = TEXT("");
+	RequestParams.page = 1;
+	RequestParams.pageSize = 100;
+
+	FNexusAttributionAPI::GetCreators(
+		RequestParams,
+		FNexusAttributionAPI::FOnGetCreators200ResponseCallback::CreateUObject(this, &UReferralsBountiesMenuUserWidget::OnGetCreatorsComplete),
+		FNexusOnHttpErrorDelegate::CreateUObject(this, &UReferralsBountiesMenuUserWidget::OnGetCreatorsError)
+	);
+}
+
+void UReferralsBountiesMenuUserWidget::UpdateSavedReferralCode()
+{
+	// Load referral code
+	UGameplayStatics::AsyncLoadGameFromSlot(
+		SAVELOAD_SLOT_NAME,
+		GetOwningLocalPlayer()->GetLocalPlayerIndex(),
+		FAsyncLoadGameFromSlotDelegate::CreateUObject(this, &UReferralsBountiesMenuUserWidget::OnAsyncLoadGameFromSlotComplete)
+	);
 }
 
 void UReferralsBountiesMenuUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	// For testing referral progress, set referral progress goal to 5
+	ReferralProgressGoal = 5;
 
 	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
@@ -65,14 +88,11 @@ void UReferralsBountiesMenuUserWidget::NativeConstruct()
 		ViewBoutniesButton->OnClicked.AddDynamic(this, &UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed);
 	}
 
-	// #TODO Generate auth code (https://api.nexus.gg/v1/referrals/player/{playerId}/authCode)
-
-	// #TODO Query player's referral code (https://api.nexus.gg/v1/referrals/player/{playerId}/code)
+	// Query player's referral code
 	UpdatePlayerReferralCode();
 
-	// #TODO If none exists, generate code for a user (https://api.nexus.gg/v1/referrals/code)
-
-	// #TODO Query bounties (https://api.nexus.gg/v1/bounties/), then populate entries
+	// Similar to UCreatorSupportUserWidget, display the saved referral/creator code in the ReferralCodeInputTextBox if applicable
+	UpdateSavedReferralCode();
 }
 
 void UReferralsBountiesMenuUserWidget::OnBackButtonPressed()
@@ -93,15 +113,55 @@ void UReferralsBountiesMenuUserWidget::OnSubmitButtonPressed()
 			return;
 		}
 
-		// #TODO Replace logic when Unreal SDK template is in.
-		//OnSubmitReferralCodeCompleteDelegate.BindUObject(this, &UCreatorSupportUserWidget::OnSubmitReferralCodeComplete);
-		//NexusSDK::SubmitReferralCode(FString GroupId, OnSubmitReferralCodeCompleteDelegate);
+		if (LocalPlayerReferralCode == ReferralCodeInputTextBox->GetText().ToString().ToUpper()) 
+		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("You cannot refer yourself! Try again with a different code.")));
+			}
 
-		// #TODO Replace logic below when NexusSDK::SubmitReferralCode is in
-		FString TestGroupId = TEXT("TestGroupId");
-		FString TestGroupName = TEXT("TestGroupName");
-		OnSubmitReferralCodeComplete(TestGroupId, TestGroupName, true);
-	
+			UE_LOG(LogNexusSampleProject, Warning, TEXT("You cannot refer yourself! Try again with a different code."));
+			return;
+		}
+		
+		// Similar to UCreatorSupportUserWidget, check if the player's input matches any referral codes found on the backend, 
+		// and if so save the code on disk so that shop/store integration can reference this code to attribute to creators
+		bool bReferralCodeFound = false;
+		for (FString QueriedReferralCode : ReferralCodeList)
+		{
+			FString Compare1 = QueriedReferralCode.ToUpper();
+			FString Compare2 = ReferralCodeInputTextBox->GetText().ToString().ToUpper();
+			if (QueriedReferralCode.ToUpper() == ReferralCodeInputTextBox->GetText().ToString().ToUpper())
+			{
+				bReferralCodeFound = true;
+			}
+		}
+
+		if (!bReferralCodeFound)
+		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Referral code: %s was not found on the backend. Try again with a different code."), *ReferralCodeInputTextBox->GetText().ToString().ToUpper()));
+			}
+
+			UE_LOG(LogNexusSampleProject, Warning, TEXT("Referral code: %s was not found"), *ReferralCodeInputTextBox->GetText().ToString().ToUpper());
+			return;
+		}
+
+		SaveGameInstance = Cast<UNexusSampleProjectSaveGame>(UGameplayStatics::CreateSaveGameObject(UNexusSampleProjectSaveGame::StaticClass()));
+		if (SaveGameInstance)
+		{
+			SaveGameInstance->SaveSlotName = SAVELOAD_SLOT_NAME;
+			SaveGameInstance->CreatorCode = ReferralCodeInputTextBox->GetText().ToString().ToUpper();
+			SaveGameInstance->UserIndex = GetOwningLocalPlayer()->GetLocalPlayerIndex();
+			UGameplayStatics::AsyncSaveGameToSlot(
+				SaveGameInstance,
+				SaveGameInstance->SaveSlotName,
+				SaveGameInstance->UserIndex,
+				FAsyncSaveGameToSlotDelegate::CreateUObject(this, &UReferralsBountiesMenuUserWidget::OnAsyncSaveGameToSlotComplete)
+			);
+		}
+
 		ReferralCodeInputTextBox->SetText(FText());
 	}
 }
@@ -149,48 +209,147 @@ void UReferralsBountiesMenuUserWidget::OnViewBountiesButtonPressed()
 	}
 }
 
-void UReferralsBountiesMenuUserWidget::OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful)
+void UReferralsBountiesMenuUserWidget::OnGetCreatorsComplete(const FNexusAttributionGetCreators200Response& Response)
 {
-	if (bWasSuccessful)
+	UE_LOG(LogNexusSampleProject, Log, TEXT("GetCreators returned a successful response"));
+
+	// #NOTE For an example, we will use the 1st creator found in the GetCreators call, and assign that data to the player to mimic login.
+	if (Response.creators.Num() >0)
 	{
-		if (ensureMsgf(IsValid(PlayerReferralCode), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
-		{
-			PlayerReferralCode->SetText(FText::FromString(ReferralCode));
-		}
+		FNexusReferralGetReferralInfoByPlayerIdRequestParams RequestParams;
+		RequestParams.playerId = Response.creators[0].id;
+		RequestParams.page = 1;
+		RequestParams.pageSize = 100;
 
-		// Logging
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Get player referral code succeeded! ReferralCode: %s"), *ReferralCode));
-		}
+		FNexusReferralAPI::FOnGetReferralInfoByPlayerIdResponse OnGetReferralInfoByPlayerIdResponse;
+		OnGetReferralInfoByPlayerIdResponse.On200Response.BindUObject(this, &UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerIdFirstCreator200ResponseComplete);
+		OnGetReferralInfoByPlayerIdResponse.On400Response.BindUObject(this, &UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerId400ResponseComplete);
 
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Get player referral code succeeded! ReferralCode: %s"), *ReferralCode);
-	}
-	else
+		FNexusReferralAPI::GetReferralInfoByPlayerId(
+			RequestParams,
+			OnGetReferralInfoByPlayerIdResponse,
+			FNexusOnHttpErrorDelegate::CreateUObject(this, &UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerIdError)
+		);
+	}	
+	
+	// For each creator, get their current referral/creator code and store it for player validation input check in UCreatorSupportUserWidget::OnSubmitButtonPressed
+	for (FNexusAttributionCreator Creator : Response.creators)
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Get player referral code failed!"));
-		}
+		FNexusReferralGetReferralInfoByPlayerIdRequestParams RequestParams;
+		RequestParams.playerId = Creator.id;
+		RequestParams.page = 1;
+		RequestParams.pageSize = 100;
 
-		UE_LOG(LogNexusSampleProject, Error, TEXT("Get player referral code failed!"));
+		FNexusReferralAPI::FOnGetReferralInfoByPlayerIdResponse OnGetReferralInfoByPlayerIdResponse;
+		OnGetReferralInfoByPlayerIdResponse.On200Response.BindUObject(this, &UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerId200ResponseComplete);
+		OnGetReferralInfoByPlayerIdResponse.On400Response.BindUObject(this, &UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerId400ResponseComplete);
+
+		FNexusReferralAPI::GetReferralInfoByPlayerId(
+			RequestParams,
+			OnGetReferralInfoByPlayerIdResponse,
+			FNexusOnHttpErrorDelegate::CreateUObject(this, &UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerIdError)
+		);
 	}
 }
 
-void UReferralsBountiesMenuUserWidget::OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful)
+void UReferralsBountiesMenuUserWidget::OnGetCreatorsError(int32 ErrorCode)
 {
-	if (bWasSuccessful && !GroupId.IsEmpty() && !GroupName.IsEmpty())
+	// #TODO display widget on screen message that get creators failed, debug screen message will suffice for now
+	if (GEngine)
 	{
-		// Logging
-		if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to GetCreators. ErrorCode: %d"), ErrorCode));
+	}
+
+	UE_LOG(LogNexusSampleProject, Error, TEXT("Failed to GetCreators. ErrorCode: %d"), ErrorCode);
+}
+
+void UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerIdFirstCreator200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response)
+{
+	if (ensureMsgf(IsValid(PlayerReferralCode), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
+	{
+		// #NOTE For example, we will use the 1st creator found in the GetCreators call, and assign that data to the player to mimic login
+		if (Response.referralCodes.Num() > 0 && LocalPlayerReferralCode.IsEmpty())
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Submit creator (referral) code success! Response - GroupId: %s, GroupName: %s"), *GroupId, *GroupName));
+			LocalPlayerReferralCode = Response.referralCodes[0].code;
+			PlayerReferralCode->SetText(FText::FromString(Response.referralCodes[0].code).ToUpper());
 		}
 
-		UE_LOG(LogNexusSampleProject, Log, TEXT("Submit referral code succeeded! Response - GroupId: %s, GroupName : %s"), *GroupId, *GroupName);
+		if (Response.referrals.Num() > -1) 
+		{
+			ReferralProgressBar->SetPercent(Response.referrals.Num()/ReferralProgressGoal);
+		}
+	}
+}
+
+void UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerId200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response)
+{
+	UE_LOG(LogNexusSampleProject, Log, TEXT("GetReferralInfoByPlayerId returned a successful response"));
+
+	// Store code on a successful response
+	for (FNexusReferralReferralCodeResponse ReferralCode : Response.referralCodes)
+	{
+		ReferralCodeList.AddUnique(ReferralCode.code);
+	}
+}
+
+void UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerId400ResponseComplete(const FNexusReferralReferralError& Response)
+{
+	// #TODO display widget on screen message that get creator code returned 400, debug screen message will suffice for now
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OnGetReferralInfoByPlayerId returned a 400 error with message: %s"), *Response.code));
+	}
+
+	UE_LOG(LogNexusSampleProject, Error, TEXT("OnGetReferralInfoByPlayerId returned a 400 error with message: %s"), *Response.code);
+}
+
+void UReferralsBountiesMenuUserWidget::OnGetReferralInfoByPlayerIdError(int32 ErrorCode)
+{
+	// #TODO display widget on screen message that get creator code failed, debug screen message will suffice for now
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Failed to GetCreatorCode. ErrorCode: %d"), ErrorCode));
+	}
+
+	UE_LOG(LogNexusSampleProject, Error, TEXT("Failed to GetCreatorCode. ErrorCode: %d"), ErrorCode);
+}
+
+void UReferralsBountiesMenuUserWidget::OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Valid Referral Code was entered! Code was saved to settings.")));
+		}
+
+		UE_LOG(LogNexusSampleProject, Log, TEXT("Valid Referral Code was entered! Code was saved to settings."));
 	}
 	else
 	{
-		UE_LOG(LogNexusSampleProject, Error, TEXT("Submit referral code failed!"));
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Referral Code failed to save to settings!")));
+		}
+
+		UE_LOG(LogNexusSampleProject, Error, TEXT("Referral Code failed to save to disk"));
+	}
+}
+
+void UReferralsBountiesMenuUserWidget::OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame)
+{
+	if (UNexusSampleProjectSaveGame* SaveGameRef = Cast<UNexusSampleProjectSaveGame>(OutSaveGame))
+	{
+		if (ensureMsgf(IsValid(ReferralCodeInputTextBox), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
+		{
+			ReferralCodeInputTextBox->SetText(FText::FromString(*SaveGameRef->CreatorCode));
+
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Creator code loaded from save game!")));
+			}
+
+			UE_LOG(LogNexusSampleProject, Log, TEXT("Creator Code loaded from disk"));
+		}
 	}
 }

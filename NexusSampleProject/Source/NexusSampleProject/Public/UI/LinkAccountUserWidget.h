@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UI/NexusSampleProjectBaseWidget.h"
+#include "NexusShared.h"
 #include "LinkAccountUserWidget.generated.h"
 
 class UButton;
 class UTextBlock;
+class UNexusSampleProjectSaveGame;
 
 /**
  * Widget used to display information about how to link a user's nexus account with their referral code
@@ -16,7 +18,6 @@ UCLASS()
 class NEXUSSAMPLEPROJECT_API ULinkAccountUserWidget : public UNexusSampleProjectBaseWidget
 {
 	GENERATED_BODY()
-
 
 protected:
 
@@ -30,8 +31,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UTextBlock* PlayerReferralCode;
 
-	/** #TODO Remove me when Unreal SDK is in. Delegate used for when retrieving player's referral code completes */
-	//NexusSDK::FOnGetReferralCodeComplete OnGetReferralCodeCompleteDelegate;
+	UPROPERTY(BlueprintReadOnly, Category = "Save Game")
+	UNexusSampleProjectSaveGame* SaveGameInstance;
 
 public:
 
@@ -46,6 +47,6 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Link Account Menu Buttons")
 	void OnBackButtonPressed();
 
-	/** NexusAPI - Callback for when retrieving the player's referral code completes */
-	void OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful);
+	/** Callback for when loading the save game to slot completes */
+	void OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame);
 };

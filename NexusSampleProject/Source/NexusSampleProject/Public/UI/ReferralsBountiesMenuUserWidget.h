@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "UI/NexusSampleProjectBaseWidget.h"
 #include "UI/LinkAccountUserWidget.h"
+#include "Generated/AttributionAPI.h"
+#include "Generated/ReferralAPI.h"
+#include "NexusShared.h"
 #include "ReferralsBountiesMenuUserWidget.generated.h"
 
 class UTextBlock;
@@ -12,6 +15,7 @@ class UButton;
 class UEditableTextBox;
 class UProgressBar;
 class UBountiesUserWidget;
+class UNexusSampleProjectSaveGame;
 
 /**
  * Widget used to utilize Nexus Referrals & Bounties functionality
@@ -30,8 +34,23 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UBountiesUserWidget> BountiesWidgetClass;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Save Game")
+	UNexusSampleProjectSaveGame* SaveGameInstance;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Referrals & Bounties Menu")
+	TArray<FString> ReferralCodeList;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Referrals & Bounties Menu")
+	FString LocalPlayerReferralCode;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Referrals & Bounties Menu")
+	float ReferralProgressGoal;
+
 	UFUNCTION(BlueprintCallable, Category = "Nexus API")
 	void UpdatePlayerReferralCode();
+
+	UFUNCTION(BlueprintCallable, Category = "Nexus API")
+	void UpdateSavedReferralCode();
 
 protected:
 
@@ -69,12 +88,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UProgressBar* ReferralProgressBar;
 
-	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when retrieving player's referral code completes */
-	//NexusSDK::FOnGetReferralCodeComplete OnGetReferralCodeCompleteDelegate;
-
-	/** #TODO Remove me when Unreal SDK template is in. Delegate used for when submitting referral or creator code completes */
-	//NexusSDK::FOnSubmitReferralCodeComplete OnSubmitReferralCodeCompleteDelegate;
-
 private:
 	
 	/** Callback for when the back button is pressed */
@@ -97,9 +110,27 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "Referrals & Bounties Menu Buttons")
 	void OnViewBountiesButtonPressed();	
 
-	/** #TODO NexusAPI - Callback for when retrieving the player's referral code completes */
-	void OnGetPlayerReferralCodeComplete(FString& ReferralCode, bool bWasSuccessful);
+	/** Callback for when GetCreatorsCompletes successfully */
+	void OnGetCreatorsComplete(const FNexusAttributionGetCreators200Response& Response);
 
-	/** #TODO NexusAPI - Callback for when submitting referral or creator code completes */
-	void OnSubmitReferralCodeComplete(FString& GroupId, FString& GroupName, /* FReferralStruct ReferralInfo, */ bool bWasSuccessful);
+	/** Callback for when GetCreatorsCompletes fails */
+	void OnGetCreatorsError(int32 ErrorCode);
+
+	/** Callback for when OnGetReferralInfoByPlayerId completes for the 1st player in the GetCreators call, and returns a 200 response */
+	void OnGetReferralInfoByPlayerIdFirstCreator200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response);
+
+	/** Callback for when OnGetReferralInfoByPlayerId completes, and returns a 200 response */
+	void OnGetReferralInfoByPlayerId200ResponseComplete(const FNexusReferralGetReferralInfoByPlayerId200Response& Response);
+
+	/** Callback for when OnGetReferralInfoByPlayerId completes, and returns a 400 response */
+	void OnGetReferralInfoByPlayerId400ResponseComplete(const FNexusReferralReferralError& Response);
+
+	/** Callback for when GetCreatorCodeCompletes fails */
+	void OnGetReferralInfoByPlayerIdError(int32 ErrorCode);
+
+	/** Callback for when saving the save game to slot completes */
+	void OnAsyncSaveGameToSlotComplete(const FString& SlotName, const int32 UserIndex, bool bWasSuccessful);
+
+	/** Callback for when loading the save game to slot completes */
+	void OnAsyncLoadGameFromSlotComplete(const FString& SlotName, const int32 UserIndex, USaveGame* OutSaveGame);
 };
