@@ -101,6 +101,11 @@ void UReferralsBountiesMenuUserWidget::OnBackButtonPressed()
 	{
 		RemoveFromParent();
 		HUD->ReferralsBountiesMenuWidget = nullptr;
+
+		if (IsValid(HUD->PauseMenuWidget)) 
+		{
+			HUD->PauseMenuWidget->SetupInitialFocus(GetOwningPlayer());
+		}		
 	}
 }
 

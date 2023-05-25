@@ -7,6 +7,19 @@
 #include "NexusSampleProjectHUD.h"
 #include "Components/Button.h"
 
+void UHUDUserWidget::SetupInitialFocus(APlayerController* Controller)
+{
+	FInputModeGameAndUI GameAndUIMode;
+	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	if (ensureMsgf(IsValid(PauseButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
+	{
+		GameAndUIMode.SetWidgetToFocus(PauseButton->TakeWidget());
+	}
+
+	Controller->SetInputMode(GameAndUIMode);
+}
+
 void UHUDUserWidget::NativeConstruct()
 {
 	if (IsValid(PauseButton))

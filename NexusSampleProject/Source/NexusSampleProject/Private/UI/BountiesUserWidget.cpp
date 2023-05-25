@@ -55,6 +55,11 @@ void UBountiesUserWidget::OnBackButtonPressed()
 	{
 		RemoveFromParent();
 		HUD->BountiesWidget = nullptr;
+
+		if (IsValid(HUD->ReferralsBountiesMenuWidget)) 
+		{
+			HUD->ReferralsBountiesMenuWidget->SetupInitialFocus(GetOwningPlayer());
+		}		
 	}
 }
 

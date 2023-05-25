@@ -19,6 +19,8 @@ class NEXUSSAMPLEPROJECT_API UHUDUserWidget : public UNexusSampleProjectBaseWidg
 
 public:
 
+	void SetupInitialFocus(APlayerController* Controller) override;
+
 	UPROPERTY(EditAnywhere, Category = "Menu Class Types")
 	TSubclassOf<UPauseMenuUserWidget> PauseMenuWidgetClass;
 

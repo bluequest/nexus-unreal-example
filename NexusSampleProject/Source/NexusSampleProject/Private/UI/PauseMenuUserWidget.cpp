@@ -91,9 +91,9 @@ void UPauseMenuUserWidget::SetupInitialFocus(APlayerController* Controller)
 	FInputModeGameAndUI GameAndUIMode;
 	GameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	if (ensureMsgf(IsValid(BackButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
+	if (ensureMsgf(IsValid(CreatorSupportButton), BP_ENSURE_REASON_INVALID_CLASS_WIDGET))
 	{
-		GameAndUIMode.SetWidgetToFocus(BackButton->TakeWidget());
+		GameAndUIMode.SetWidgetToFocus(CreatorSupportButton->TakeWidget());
 	}
 
 	Controller->SetInputMode(GameAndUIMode);

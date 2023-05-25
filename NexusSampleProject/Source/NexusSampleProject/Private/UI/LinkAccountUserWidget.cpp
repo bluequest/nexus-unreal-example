@@ -52,6 +52,11 @@ void ULinkAccountUserWidget::OnBackButtonPressed()
 	{
 		RemoveFromParent();
 		HUD->LinkAccountWidget = nullptr;
+
+		if (IsValid(HUD->ReferralsBountiesMenuWidget)) 
+		{
+			HUD->ReferralsBountiesMenuWidget->SetupInitialFocus(GetOwningPlayer());
+		}
 	}
 }
 
