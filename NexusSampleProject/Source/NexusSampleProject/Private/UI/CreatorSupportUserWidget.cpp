@@ -69,6 +69,11 @@ void UCreatorSupportUserWidget::OnBackButtonPressed()
 	{
 		RemoveFromParent();
 		HUD->CreatorSupportWidget = nullptr;
+
+		if (IsValid(HUD->PauseMenuWidget)) 
+		{
+			HUD->PauseMenuWidget->SetupInitialFocus(GetOwningPlayer());
+		}		
 	}
 }
 

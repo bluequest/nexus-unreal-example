@@ -51,6 +51,11 @@ void UItemShopMenuUserWidget::OnBackButtonPressed()
 	{
 		RemoveFromParent();
 		HUD->ItemShopMenuWidget = nullptr;
+
+		if (IsValid(HUD->PauseMenuWidget)) 
+		{
+			HUD->PauseMenuWidget->SetupInitialFocus(GetOwningPlayer());
+		}
 	}
 }
 
