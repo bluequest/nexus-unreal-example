@@ -16,8 +16,12 @@ The Nexus Unreal Engine Sample Project has a dependency on the [Nexus Unreal SDK
 4) Build and run the solution
 
 ## Controls
+PC:
 - ```P```: Toggle Pause
 - ```Left Click```: Interact (Used to press pause button located at the top left of the screen in-game)
+
+Consoles:
+- ```Gamepad Face Button Top```: Toggle Pause
 
 ## Contents
 
@@ -40,4 +44,10 @@ And the following HUD class:
 The project also contains Unreal BP widgets which derive from the respective widget class described in this section. Note that each required component of each widget is marked with a ```BindWidget``` meta tag. This allows the developer to take the C++ UI layout and just bind widgets to the various components needed with their own styles and looks, and ensures that these components are present in the child BP class. 
 
 ### Save Load Creator Code
-The ```UCreatorSupportUserWidget``` widget uses the ```UNexusSampleProjectSaveGame``` class included in order to save the creator code input by the player which can then be loaded to be used for reference when necessary, such as in the ```UItemShopMenuUserWidget``` when attempting to pair a new sale attributed to a creator.
+The ```UCreatorSupportUserWidget```, and ```UReferralsBountiesMenuUserWidget``` widget uses the ```UNexusSampleProjectSaveGame``` class included in order to save the creator code input by the player which can then be loaded to be used for reference when necessary, such as in the ```UItemShopMenuUserWidget``` when attempting to pair a new sale attributed to a creator during shop/store integration. 
+
+### Creator/Referral Code Input Validation
+Code input is enforced in ```UCreatorSupportUserWidget```, and ```UReferralsBountiesMenuUserWidget```. Creators are retreived on the backend using ```FNexusAttributionAPI::GetCreators``` then queried using ``FNexusReferralAPI::GetReferralInfoByPlayerId``` to retreive the creator's code which is then cached in an array. Input is then checked against that array when the user submits their code.
+
+### Example Project User
+For this example project, the 1st creator found in the ```GetCreators``` call is used to mimic user login, since user implementation is not integrated. This said, the "Your Referral Code" section in ```UReferralsBountiesMenuUserWidget``` will just use this queried user to display the referral code visual on the front end.
