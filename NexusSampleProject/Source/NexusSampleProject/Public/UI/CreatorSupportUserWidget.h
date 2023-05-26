@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NexusPrototype.h"
 #include "GameFramework/SaveGame.h"
 #include "Generated/AttributionAPI.h"
 #include "Generated/ReferralAPI.h"
